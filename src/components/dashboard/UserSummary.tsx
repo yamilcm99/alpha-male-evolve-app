@@ -2,7 +2,7 @@
 import React from 'react';
 import { useUser } from '@/context/UserContext';
 import { Card, CardContent } from '@/components/ui/card';
-import { BadHabit, CommunicationSkills, PhysicalCondition, PastTrauma } from '@/types/user';
+import { BadHabit, CommunicationSkills, PhysicalCondition, PastTrauma, LifeStage, FamilyStatus } from '@/types/user';
 
 const UserSummary = () => {
   const { userProfile } = useUser();
@@ -23,9 +23,8 @@ const UserSummary = () => {
     if (userProfile.communicationSkills === CommunicationSkills.ADVANCED) score += 10;
     if (userProfile.communicationSkills === CommunicationSkills.EXPERT) score += 15;
     
-    if (userProfile.motivationLevel === 'medium') score += 5;
-    if (userProfile.motivationLevel === 'high') score += 10;
-    if (userProfile.motivationLevel === 'very_high') score += 15;
+    if (userProfile.lifeStage === LifeStage.PLATEAU) score += 5;
+    if (userProfile.lifeStage === LifeStage.ASCENT) score += 15;
     
     if (userProfile.income === 'medium') score += 5;
     if (userProfile.income === 'high') score += 10;
@@ -37,6 +36,14 @@ const UserSummary = () => {
     // Factores negativos
     const badHabits = userProfile.badHabits?.filter(h => h !== BadHabit.NONE) || [];
     score -= badHabits.length * 5;
+    
+    // Penalizar más por niveles de adicción más altos
+    const addictionLevels = userProfile.addictionLevels || [];
+    addictionLevels.forEach(level => {
+      if (level === 'level_3') score -= 3;
+      if (level === 'level_4') score -= 4;
+      if (level === 'level_5') score -= 5;
+    });
     
     if (userProfile.pastTraumas?.includes(PastTrauma.CHILDHOOD)) score -= 5;
     if (userProfile.pastTraumas?.includes(PastTrauma.RELATIONSHIP)) score -= 3;
@@ -92,12 +99,12 @@ const UserSummary = () => {
               }</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-gray-400">Motivación</span>
+              <span className="text-gray-400">Etapa vital</span>
               <span>{
-                userProfile.motivationLevel === 'very_low' ? 'Muy baja' :
-                userProfile.motivationLevel === 'low' ? 'Baja' :
-                userProfile.motivationLevel === 'medium' ? 'Media' :
-                userProfile.motivationLevel === 'high' ? 'Alta' : 'Muy alta'
+                userProfile.lifeStage === LifeStage.ASCENT ? 'En ascenso' :
+                userProfile.lifeStage === LifeStage.DESCENT ? 'En bajada' :
+                userProfile.lifeStage === LifeStage.PLATEAU ? 'En meseta' :
+                userProfile.lifeStage === LifeStage.UNSTABLE ? 'Inestable' : 'Crítica'
               }</span>
             </div>
             <div className="flex flex-col">

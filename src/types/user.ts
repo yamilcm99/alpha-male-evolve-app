@@ -1,4 +1,3 @@
-
 export type UserProfile = {
   id?: string;
   name: string;
@@ -8,9 +7,10 @@ export type UserProfile = {
   pastTraumas: PastTrauma[];
   savings: SavingsLevel;
   hobbies: string[];
-  motivationLevel: MotivationLevel;
-  beliefs: string[];
+  lifeStage: LifeStage;
+  religion: string;
   badHabits: BadHabit[];
+  addictionLevels: AddictionLevel[];
   employmentStatus: EmploymentStatus;
   income: IncomeLevel;
   relationshipStatus: RelationshipStatus;
@@ -18,11 +18,11 @@ export type UserProfile = {
 };
 
 export enum FamilyStatus {
-  SINGLE = "single",
-  MARRIED = "married",
-  DIVORCED = "divorced",
-  WIDOWED = "widowed",
-  PARENT = "parent"
+  LIVES_ALONE = "lives_alone",
+  WITH_PARENTS = "with_parents",
+  WITH_PARTNER = "with_partner",
+  WITH_FAMILY = "with_family",
+  WITH_ROOMMATES = "with_roommates"
 }
 
 export enum PhysicalCondition {
@@ -48,12 +48,12 @@ export enum SavingsLevel {
   HIGH = "high"
 }
 
-export enum MotivationLevel {
-  VERY_LOW = "very_low",
-  LOW = "low",
-  MEDIUM = "medium",
-  HIGH = "high",
-  VERY_HIGH = "very_high"
+export enum LifeStage {
+  ASCENT = "ascent",
+  DESCENT = "descent",
+  PLATEAU = "plateau",
+  UNSTABLE = "unstable",
+  CRITICAL = "critical"
 }
 
 export enum BadHabit {
@@ -64,6 +64,14 @@ export enum BadHabit {
   OVEREATING = "overeating",
   GAMBLING = "gambling",
   NONE = "none"
+}
+
+export enum AddictionLevel {
+  LEVEL_1 = "level_1",
+  LEVEL_2 = "level_2",
+  LEVEL_3 = "level_3",
+  LEVEL_4 = "level_4",
+  LEVEL_5 = "level_5"
 }
 
 export enum EmploymentStatus {

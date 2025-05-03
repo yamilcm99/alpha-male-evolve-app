@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/context/UserContext';
@@ -6,9 +7,10 @@ import {
   FamilyStatus, 
   PhysicalCondition, 
   PastTrauma, 
-  SavingsLevel, 
-  MotivationLevel, 
+  SavingsLevel,
+  LifeStage,
   BadHabit, 
+  AddictionLevel,
   EmploymentStatus, 
   IncomeLevel, 
   RelationshipStatus,
@@ -30,21 +32,22 @@ const OnboardingForm = () => {
   const [formData, setFormData] = useState<Partial<UserProfile>>({
     name: '',
     age: 30,
-    familyStatus: FamilyStatus.SINGLE,
+    familyStatus: FamilyStatus.LIVES_ALONE,
     physicalCondition: PhysicalCondition.AVERAGE,
     pastTraumas: [PastTrauma.NONE],
     savings: SavingsLevel.LOW,
     hobbies: [],
-    motivationLevel: MotivationLevel.MEDIUM,
-    beliefs: [],
+    lifeStage: LifeStage.PLATEAU,
+    religion: '',
     badHabits: [],
+    addictionLevels: [],
     employmentStatus: EmploymentStatus.EMPLOYED,
     income: IncomeLevel.MEDIUM,
     relationshipStatus: RelationshipStatus.SINGLE,
     communicationSkills: CommunicationSkills.INTERMEDIATE
   });
 
-  const totalSteps = 5;
+  const totalSteps = 6; // Aumentado para incluir la nueva sección de adicciones
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -93,9 +96,9 @@ const OnboardingForm = () => {
       return;
     }
 
-    // Asegurarse de que hay al menos una creencia
-    if (!formData.beliefs?.length) {
-      toast.error("Por favor, indica al menos una creencia");
+    // Asegurarse de que hay religión
+    if (!formData.religion) {
+      toast.error("Por favor, indica tu religión o creencia espiritual");
       return;
     }
 
@@ -152,7 +155,7 @@ const OnboardingForm = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>Estado Familiar</Label>
+                <Label>Con quién vives</Label>
                 <RadioGroup
                   value={formData.familyStatus}
                   onValueChange={(value) => handleSingleSelectChange('familyStatus', value)}
@@ -162,10 +165,11 @@ const OnboardingForm = () => {
                     <div key={status} className="flex items-center space-x-2">
                       <RadioGroupItem value={status} id={`family-${status}`} />
                       <Label htmlFor={`family-${status}`}>
-                        {status === 'single' ? 'Soltero' :
-                          status === 'married' ? 'Casado' :
-                          status === 'divorced' ? 'Divorciado' :
-                          status === 'widowed' ? 'Viudo' : 'Padre'}
+                        {status === 'lives_alone' ? 'Vivo solo' :
+                          status === 'with_parents' ? 'Con mis padres' :
+                          status === 'with_partner' ? 'Con mi pareja' :
+                          status === 'with_family' ? 'Con mi familia (pareja e hijos)' : 
+                          'Con compañeros de piso'}
                       </Label>
                     </div>
                   ))}
@@ -245,20 +249,20 @@ const OnboardingForm = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>Nivel de Motivación</Label>
+                <Label>¿En qué etapa de tu vida sientes que estás?</Label>
                 <RadioGroup
-                  value={formData.motivationLevel}
-                  onValueChange={(value) => handleSingleSelectChange('motivationLevel', value)}
+                  value={formData.lifeStage}
+                  onValueChange={(value) => handleSingleSelectChange('lifeStage', value)}
                   className="flex flex-col space-y-2"
                 >
-                  {Object.values(MotivationLevel).map((level) => (
-                    <div key={level} className="flex items-center space-x-2">
-                      <RadioGroupItem value={level} id={`motivation-${level}`} />
-                      <Label htmlFor={`motivation-${level}`}>
-                        {level === 'very_low' ? 'Muy baja' :
-                          level === 'low' ? 'Baja' :
-                          level === 'medium' ? 'Media' :
-                          level === 'high' ? 'Alta' : 'Muy alta'}
+                  {Object.values(LifeStage).map((stage) => (
+                    <div key={stage} className="flex items-center space-x-2">
+                      <RadioGroupItem value={stage} id={`lifestage-${stage}`} />
+                      <Label htmlFor={`lifestage-${stage}`}>
+                        {stage === 'ascent' ? 'En ascenso (mejorando)' :
+                          stage === 'descent' ? 'En bajada (empeorando)' :
+                          stage === 'plateau' ? 'En meseta (estancado)' :
+                          stage === 'unstable' ? 'Inestable (altibajos)' : 'Crítica (situación grave)'}
                       </Label>
                     </div>
                   ))}
@@ -271,7 +275,43 @@ const OnboardingForm = () => {
       case 3:
         return (
           <div className="space-y-6">
-            <h3 className="text-xl font-semibold mb-4">Hábitos y Hobbies</h3>
+            <h3 className="text-xl font-semibold mb-4">Religión y Hobbies</h3>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="religion">Religión o Creencias Espirituales</Label>
+                <Input 
+                  id="religion" 
+                  placeholder="Cristiano, Ateo, Agnóstico, etc." 
+                  value={formData.religion} 
+                  onChange={e => setFormData(prev => ({ ...prev, religion: e.target.value }))}
+                  required
+                  className="bg-evolve-dark/60 border-evolve-gray/30 text-white"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="hobbies">Hobbies (separados por coma)</Label>
+                <Input 
+                  id="hobbies" 
+                  placeholder="Gym, leer, viajar, etc." 
+                  value={formData.hobbies?.join(', ')} 
+                  onChange={(e) => {
+                    const hobbies = e.target.value.split(',').map(hobby => hobby.trim()).filter(Boolean);
+                    setFormData(prev => ({ ...prev, hobbies }));
+                  }}
+                  required
+                  className="bg-evolve-dark/60 border-evolve-gray/30 text-white"
+                />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 4:
+        return (
+          <div className="space-y-6">
+            <h3 className="text-xl font-semibold mb-4">Hábitos y Adicciones</h3>
 
             <div className="space-y-4">
               <div className="space-y-2">
@@ -298,39 +338,58 @@ const OnboardingForm = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="hobbies">Hobbies (separados por coma)</Label>
-                <Input 
-                  id="hobbies" 
-                  placeholder="Gym, leer, viajar, etc." 
-                  value={formData.hobbies?.join(', ')} 
-                  onChange={(e) => {
-                    const hobbies = e.target.value.split(',').map(hobby => hobby.trim()).filter(Boolean);
-                    setFormData(prev => ({ ...prev, hobbies }));
-                  }}
-                  required
-                  className="bg-evolve-dark/60 border-evolve-gray/30 text-white"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="beliefs">Creencias/Valores (separados por coma)</Label>
-                <Input 
-                  id="beliefs" 
-                  placeholder="Autodisciplina, honestidad, etc." 
-                  value={formData.beliefs?.join(', ')} 
-                  onChange={(e) => {
-                    const beliefs = e.target.value.split(',').map(belief => belief.trim()).filter(Boolean);
-                    setFormData(prev => ({ ...prev, beliefs }));
-                  }}
-                  required
-                  className="bg-evolve-dark/60 border-evolve-gray/30 text-white"
-                />
+                <Label>Nivel de adicción (1-5, donde 5 es la más grave)</Label>
+                {formData.badHabits?.filter(h => h !== BadHabit.NONE).map((habit) => (
+                  <div key={habit} className="mt-2">
+                    <Label className="mb-1">
+                      {habit === 'pornography' ? 'Pornografía' :
+                       habit === 'alcohol' ? 'Alcohol' :
+                       habit === 'smoking' ? 'Fumar' :
+                       habit === 'procrastination' ? 'Procrastinación' :
+                       habit === 'overeating' ? 'Comer en exceso' :
+                       habit === 'gambling' ? 'Juegos de azar' : ''}
+                    </Label>
+                    <RadioGroup
+                      value={formData.addictionLevels?.find(al => al.startsWith(`${habit}:`) || '') || ''}
+                      onValueChange={(value) => {
+                        setFormData(prev => {
+                          const currentLevels = [...(prev.addictionLevels || [])];
+                          const existingIndex = currentLevels.findIndex(l => l.startsWith(`${habit}:`));
+                          
+                          if (existingIndex >= 0) {
+                            currentLevels[existingIndex] = value;
+                          } else {
+                            currentLevels.push(value);
+                          }
+                          
+                          return { ...prev, addictionLevels: currentLevels };
+                        });
+                      }}
+                      className="flex space-x-4"
+                    >
+                      {Object.values(AddictionLevel).map((level) => (
+                        <div key={`${habit}-${level}`} className="flex items-center">
+                          <RadioGroupItem value={`${habit}:${level}`} id={`addiction-${habit}-${level}`} />
+                          <Label htmlFor={`addiction-${habit}-${level}`} className="ml-2">
+                            {level === 'level_1' ? '1' :
+                             level === 'level_2' ? '2' :
+                             level === 'level_3' ? '3' :
+                             level === 'level_4' ? '4' : '5'}
+                          </Label>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                  </div>
+                ))}
+                {(!formData.badHabits?.length || formData.badHabits?.includes(BadHabit.NONE)) && (
+                  <p className="text-sm text-gray-400">No hay hábitos seleccionados para valorar.</p>
+                )}
               </div>
             </div>
           </div>
         );
 
-      case 4:
+      case 5:
         return (
           <div className="space-y-6">
             <h3 className="text-xl font-semibold mb-4">Situación Laboral y Financiera</h3>
@@ -400,7 +459,7 @@ const OnboardingForm = () => {
           </div>
         );
 
-      case 5:
+      case 6:
         return (
           <div className="space-y-6">
             <h3 className="text-xl font-semibold mb-4">Comunicación e Interacción Social</h3>
@@ -430,17 +489,23 @@ const OnboardingForm = () => {
                 <h4 className="font-semibold text-lg mb-2">Resumen del Perfil</h4>
                 <p>Nombre: {formData.name}</p>
                 <p>Edad: {formData.age}</p>
-                <p>Estado Familiar: {
-                  formData.familyStatus === FamilyStatus.SINGLE ? 'Soltero' :
-                  formData.familyStatus === FamilyStatus.MARRIED ? 'Casado' :
-                  formData.familyStatus === FamilyStatus.DIVORCED ? 'Divorciado' :
-                  formData.familyStatus === FamilyStatus.WIDOWED ? 'Viudo' : 'Padre'
+                <p>Con quién vives: {
+                  formData.familyStatus === FamilyStatus.LIVES_ALONE ? 'Solo' :
+                  formData.familyStatus === FamilyStatus.WITH_PARENTS ? 'Con padres' :
+                  formData.familyStatus === FamilyStatus.WITH_PARTNER ? 'Con pareja' :
+                  formData.familyStatus === FamilyStatus.WITH_FAMILY ? 'Con familia' : 'Con compañeros'
                 }</p>
                 <p>Estado de Relación: {
                   formData.relationshipStatus === RelationshipStatus.SINGLE ? 'Soltero' :
                   formData.relationshipStatus === RelationshipStatus.IN_RELATIONSHIP ? 'En una relación' :
                   formData.relationshipStatus === RelationshipStatus.MARRIED ? 'Casado' :
                   formData.relationshipStatus === RelationshipStatus.DIVORCED ? 'Divorciado' : 'Viudo'
+                }</p>
+                <p>Etapa vital: {
+                  formData.lifeStage === LifeStage.ASCENT ? 'En ascenso' :
+                  formData.lifeStage === LifeStage.DESCENT ? 'En bajada' :
+                  formData.lifeStage === LifeStage.PLATEAU ? 'En meseta' :
+                  formData.lifeStage === LifeStage.UNSTABLE ? 'Inestable' : 'Crítica'
                 }</p>
                 <p>Habilidades de Comunicación: {
                   formData.communicationSkills === CommunicationSkills.BEGINNER ? 'Principiante' :
