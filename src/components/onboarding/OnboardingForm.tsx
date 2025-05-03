@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/context/UserContext';
@@ -118,6 +119,35 @@ const OnboardingForm = () => {
     navigate('/dashboard');
   };
 
+  // Helper function to generate unique IDs
+  const getUniqueId = (prefix: string, value: string) => `${prefix}-${value}`;
+
+  // Fix function for addiction level selection
+  const handleAddictionLevelChange = (habit: string, level: AddictionLevel) => {
+    setFormData(prev => {
+      // Create a copy of current addiction levels
+      const currentLevels = [...(prev.addictionLevels || [])];
+      
+      // Format our new value as "habit:level"
+      const newValue = `${habit}:${level}` as AddictionLevel;
+      
+      // Find if this habit already has a level set
+      const existingIndex = currentLevels.findIndex(item => {
+        if (typeof item === 'string' && item.startsWith(`${habit}:`)) return true;
+        return false;
+      });
+      
+      // Replace or add the new value
+      if (existingIndex >= 0) {
+        currentLevels[existingIndex] = newValue;
+      } else {
+        currentLevels.push(newValue);
+      }
+      
+      return { ...prev, addictionLevels: currentLevels };
+    });
+  };
+
   const renderStep = () => {
     switch (currentStep) {
       case 1:
@@ -155,15 +185,18 @@ const OnboardingForm = () => {
 
               <div className="space-y-2">
                 <Label>Con quién vives</Label>
-                <RadioGroup
-                  value={formData.familyStatus}
-                  onValueChange={(value) => handleSingleSelectChange('familyStatus', value)}
-                  className="flex flex-col space-y-2"
-                >
+                <div className="flex flex-col space-y-2">
                   {Object.values(FamilyStatus).map((status) => (
                     <div key={status} className="flex items-center space-x-2">
-                      <RadioGroupItem value={status} id={`family-${status}`} />
-                      <Label htmlFor={`family-${status}`}>
+                      <input
+                        type="radio"
+                        id={getUniqueId('family', status)}
+                        value={status}
+                        checked={formData.familyStatus === status}
+                        onChange={() => handleSingleSelectChange('familyStatus', status)}
+                        className="text-evolve-purple focus:ring-evolve-purple"
+                      />
+                      <Label htmlFor={getUniqueId('family', status)}>
                         {status === 'lives_alone' ? 'Vivo solo' :
                           status === 'with_parents' ? 'Con mis padres' :
                           status === 'with_partner' ? 'Con mi pareja' :
@@ -172,20 +205,23 @@ const OnboardingForm = () => {
                       </Label>
                     </div>
                   ))}
-                </RadioGroup>
+                </div>
               </div>
 
               <div className="space-y-2">
                 <Label>Estado de Relación</Label>
-                <RadioGroup
-                  value={formData.relationshipStatus}
-                  onValueChange={(value) => handleSingleSelectChange('relationshipStatus', value)}
-                  className="flex flex-col space-y-2"
-                >
+                <div className="flex flex-col space-y-2">
                   {Object.values(RelationshipStatus).map((status) => (
                     <div key={status} className="flex items-center space-x-2">
-                      <RadioGroupItem value={status} id={`relationship-${status}`} />
-                      <Label htmlFor={`relationship-${status}`}>
+                      <input
+                        type="radio"
+                        id={getUniqueId('relationship', status)}
+                        value={status}
+                        checked={formData.relationshipStatus === status}
+                        onChange={() => handleSingleSelectChange('relationshipStatus', status)}
+                        className="text-evolve-purple focus:ring-evolve-purple"
+                      />
+                      <Label htmlFor={getUniqueId('relationship', status)}>
                         {status === 'single' ? 'Soltero' :
                           status === 'in_relationship' ? 'En una relación' :
                           status === 'married' ? 'Casado' :
@@ -193,7 +229,7 @@ const OnboardingForm = () => {
                       </Label>
                     </div>
                   ))}
-                </RadioGroup>
+                </div>
               </div>
             </div>
           </div>
@@ -207,22 +243,25 @@ const OnboardingForm = () => {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label>Condición Física</Label>
-                <RadioGroup
-                  value={formData.physicalCondition}
-                  onValueChange={(value) => handleSingleSelectChange('physicalCondition', value)}
-                  className="flex flex-col space-y-2"
-                >
+                <div className="flex flex-col space-y-2">
                   {Object.values(PhysicalCondition).map((condition) => (
                     <div key={condition} className="flex items-center space-x-2">
-                      <RadioGroupItem value={condition} id={`physical-${condition}`} />
-                      <Label htmlFor={`physical-${condition}`}>
+                      <input
+                        type="radio"
+                        id={getUniqueId('physical', condition)}
+                        value={condition}
+                        checked={formData.physicalCondition === condition}
+                        onChange={() => handleSingleSelectChange('physicalCondition', condition)}
+                        className="text-evolve-purple focus:ring-evolve-purple"
+                      />
+                      <Label htmlFor={getUniqueId('physical', condition)}>
                         {condition === 'poor' ? 'Pobre' :
                           condition === 'average' ? 'Promedio' :
                           condition === 'good' ? 'Buena' : 'Excelente'}
                       </Label>
                     </div>
                   ))}
-                </RadioGroup>
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -231,11 +270,11 @@ const OnboardingForm = () => {
                   {Object.values(PastTrauma).map((trauma) => (
                     <div key={trauma} className="flex items-center space-x-2">
                       <Checkbox 
-                        id={`trauma-${trauma}`} 
+                        id={getUniqueId('trauma', trauma)} 
                         checked={formData.pastTraumas?.includes(trauma)} 
                         onCheckedChange={(checked) => handleCheckboxArrayChange('pastTraumas', trauma, checked === true)}
                       />
-                      <Label htmlFor={`trauma-${trauma}`}>
+                      <Label htmlFor={getUniqueId('trauma', trauma)}>
                         {trauma === 'childhood' ? 'Infancia' :
                           trauma === 'relationship' ? 'Relaciones' :
                           trauma === 'professional' ? 'Profesional' :
@@ -249,15 +288,18 @@ const OnboardingForm = () => {
 
               <div className="space-y-2">
                 <Label>¿En qué etapa de tu vida sientes que estás?</Label>
-                <RadioGroup
-                  value={formData.lifeStage}
-                  onValueChange={(value) => handleSingleSelectChange('lifeStage', value)}
-                  className="flex flex-col space-y-2"
-                >
+                <div className="flex flex-col space-y-2">
                   {Object.values(LifeStage).map((stage) => (
                     <div key={stage} className="flex items-center space-x-2">
-                      <RadioGroupItem value={stage} id={`lifestage-${stage}`} />
-                      <Label htmlFor={`lifestage-${stage}`}>
+                      <input
+                        type="radio"
+                        id={getUniqueId('lifestage', stage)}
+                        value={stage}
+                        checked={formData.lifeStage === stage}
+                        onChange={() => handleSingleSelectChange('lifeStage', stage)}
+                        className="text-evolve-purple focus:ring-evolve-purple"
+                      />
+                      <Label htmlFor={getUniqueId('lifestage', stage)}>
                         {stage === 'ascent' ? 'En ascenso (mejorando)' :
                           stage === 'descent' ? 'En bajada (empeorando)' :
                           stage === 'plateau' ? 'En meseta (estancado)' :
@@ -265,7 +307,7 @@ const OnboardingForm = () => {
                       </Label>
                     </div>
                   ))}
-                </RadioGroup>
+                </div>
               </div>
             </div>
           </div>
@@ -319,11 +361,11 @@ const OnboardingForm = () => {
                   {Object.values(BadHabit).map((habit) => (
                     <div key={habit} className="flex items-center space-x-2">
                       <Checkbox 
-                        id={`habit-${habit}`} 
+                        id={getUniqueId('habit', habit)} 
                         checked={formData.badHabits?.includes(habit)} 
                         onCheckedChange={(checked) => handleCheckboxArrayChange('badHabits', habit, checked === true)}
                       />
-                      <Label htmlFor={`habit-${habit}`}>
+                      <Label htmlFor={getUniqueId('habit', habit)}>
                         {habit === 'pornography' ? 'Pornografía' :
                           habit === 'alcohol' ? 'Alcohol' :
                           habit === 'smoking' ? 'Fumar' :
@@ -348,30 +390,24 @@ const OnboardingForm = () => {
                        habit === 'overeating' ? 'Comer en exceso' :
                        habit === 'gambling' ? 'Juegos de azar' : ''}
                     </Label>
-                    <RadioGroup
-                      value={formData.addictionLevels?.find(al => al.startsWith(`${habit}:`) || '')}
-                      onValueChange={(value: AddictionLevel) => {
-                        setFormData(prev => {
-                          const currentLevels = [...(prev.addictionLevels || [])];
-                          // Create a value that contains both habit and level
-                          const addictionValue = value;
-                          const existingIndex = currentLevels.findIndex(l => l.startsWith(`${habit}:`));
-                          
-                          if (existingIndex >= 0) {
-                            currentLevels[existingIndex] = addictionValue;
-                          } else {
-                            currentLevels.push(addictionValue);
-                          }
-                          
-                          return { ...prev, addictionLevels: currentLevels };
-                        });
-                      }}
-                      className="flex space-x-4"
-                    >
-                      {Object.values(AddictionLevel).filter(level => level !== AddictionLevel.NONE).map((level) => (
-                        <div key={`${habit}-${level}`} className="flex items-center">
-                          <RadioGroupItem value={`${habit}:${level}` as AddictionLevel} id={`addiction-${habit}-${level}`} />
-                          <Label htmlFor={`addiction-${habit}-${level}`} className="ml-2">
+                    <div className="flex space-x-4 mt-1">
+                      {[
+                        AddictionLevel.LEVEL_1,
+                        AddictionLevel.LEVEL_2,
+                        AddictionLevel.LEVEL_3,
+                        AddictionLevel.LEVEL_4,
+                        AddictionLevel.LEVEL_5
+                      ].map((level) => (
+                        <div key={`${habit}-${level}`} className="flex items-center space-x-1">
+                          <input
+                            type="radio"
+                            id={getUniqueId(`addiction-${habit}`, level)}
+                            value={level}
+                            checked={formData.addictionLevels?.some(al => al === `${habit}:${level}`)}
+                            onChange={() => handleAddictionLevelChange(habit, level)}
+                            className="text-evolve-purple focus:ring-evolve-purple"
+                          />
+                          <Label htmlFor={getUniqueId(`addiction-${habit}`, level)}>
                             {level === 'level_1' ? '1' :
                              level === 'level_2' ? '2' :
                              level === 'level_3' ? '3' :
@@ -379,7 +415,7 @@ const OnboardingForm = () => {
                           </Label>
                         </div>
                       ))}
-                    </RadioGroup>
+                    </div>
                   </div>
                 ))}
                 {(!formData.badHabits?.length || formData.badHabits?.includes(BadHabit.NONE)) && (
@@ -398,35 +434,41 @@ const OnboardingForm = () => {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label>Estado Laboral</Label>
-                <RadioGroup
-                  value={formData.employmentStatus}
-                  onValueChange={(value) => handleSingleSelectChange('employmentStatus', value)}
-                  className="flex flex-col space-y-2"
-                >
+                <div className="flex flex-col space-y-2">
                   {Object.values(EmploymentStatus).map((status) => (
                     <div key={status} className="flex items-center space-x-2">
-                      <RadioGroupItem value={status} id={`employment-${status}`} />
-                      <Label htmlFor={`employment-${status}`}>
+                      <input
+                        type="radio"
+                        id={getUniqueId('employment', status)}
+                        value={status}
+                        checked={formData.employmentStatus === status}
+                        onChange={() => handleSingleSelectChange('employmentStatus', status)}
+                        className="text-evolve-purple focus:ring-evolve-purple"
+                      />
+                      <Label htmlFor={getUniqueId('employment', status)}>
                         {status === 'employed' ? 'Empleado' :
                           status === 'self_employed' ? 'Autónomo' :
                           status === 'unemployed' ? 'Desempleado' : 'Estudiante'}
                       </Label>
                     </div>
                   ))}
-                </RadioGroup>
+                </div>
               </div>
 
               <div className="space-y-2">
                 <Label>Nivel de Ingresos</Label>
-                <RadioGroup
-                  value={formData.income}
-                  onValueChange={(value) => handleSingleSelectChange('income', value)}
-                  className="flex flex-col space-y-2"
-                >
+                <div className="flex flex-col space-y-2">
                   {Object.values(IncomeLevel).map((level) => (
                     <div key={level} className="flex items-center space-x-2">
-                      <RadioGroupItem value={level} id={`income-${level}`} />
-                      <Label htmlFor={`income-${level}`}>
+                      <input
+                        type="radio"
+                        id={getUniqueId('income', level)}
+                        value={level}
+                        checked={formData.income === level}
+                        onChange={() => handleSingleSelectChange('income', level)}
+                        className="text-evolve-purple focus:ring-evolve-purple"
+                      />
+                      <Label htmlFor={getUniqueId('income', level)}>
                         {level === 'none' ? 'Sin ingresos' :
                           level === 'low' ? 'Bajo' :
                           level === 'medium' ? 'Medio' :
@@ -434,27 +476,30 @@ const OnboardingForm = () => {
                       </Label>
                     </div>
                   ))}
-                </RadioGroup>
+                </div>
               </div>
 
               <div className="space-y-2">
                 <Label>Nivel de Ahorros</Label>
-                <RadioGroup
-                  value={formData.savings}
-                  onValueChange={(value) => handleSingleSelectChange('savings', value)}
-                  className="flex flex-col space-y-2"
-                >
+                <div className="flex flex-col space-y-2">
                   {Object.values(SavingsLevel).map((level) => (
                     <div key={level} className="flex items-center space-x-2">
-                      <RadioGroupItem value={level} id={`savings-${level}`} />
-                      <Label htmlFor={`savings-${level}`}>
+                      <input
+                        type="radio"
+                        id={getUniqueId('savings', level)}
+                        value={level}
+                        checked={formData.savings === level}
+                        onChange={() => handleSingleSelectChange('savings', level)}
+                        className="text-evolve-purple focus:ring-evolve-purple"
+                      />
+                      <Label htmlFor={getUniqueId('savings', level)}>
                         {level === 'none' ? 'Sin ahorros' :
                           level === 'low' ? 'Pocos ahorros' :
                           level === 'medium' ? 'Ahorros moderados' : 'Muchos ahorros'}
                       </Label>
                     </div>
                   ))}
-                </RadioGroup>
+                </div>
               </div>
             </div>
           </div>
@@ -468,22 +513,25 @@ const OnboardingForm = () => {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label>Habilidades de Comunicación</Label>
-                <RadioGroup
-                  value={formData.communicationSkills}
-                  onValueChange={(value) => handleSingleSelectChange('communicationSkills', value)}
-                  className="flex flex-col space-y-2"
-                >
+                <div className="flex flex-col space-y-2">
                   {Object.values(CommunicationSkills).map((skill) => (
                     <div key={skill} className="flex items-center space-x-2">
-                      <RadioGroupItem value={skill} id={`communication-${skill}`} />
-                      <Label htmlFor={`communication-${skill}`}>
+                      <input
+                        type="radio"
+                        id={getUniqueId('communication', skill)}
+                        value={skill}
+                        checked={formData.communicationSkills === skill}
+                        onChange={() => handleSingleSelectChange('communicationSkills', skill)}
+                        className="text-evolve-purple focus:ring-evolve-purple"
+                      />
+                      <Label htmlFor={getUniqueId('communication', skill)}>
                         {skill === 'beginner' ? 'Principiante' :
                           skill === 'intermediate' ? 'Intermedio' :
                           skill === 'advanced' ? 'Avanzado' : 'Experto'}
                       </Label>
                     </div>
                   ))}
-                </RadioGroup>
+                </div>
               </div>
 
               <div className="mt-8 p-4 bg-evolve-dark/60 rounded-lg border border-evolve-purple/20">
