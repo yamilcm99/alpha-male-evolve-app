@@ -2,7 +2,7 @@
 import React from 'react';
 import { useUser } from '@/context/UserContext';
 import { Card, CardContent } from '@/components/ui/card';
-import { BadHabit, CommunicationSkills, PhysicalCondition } from '@/types/user';
+import { BadHabit, CommunicationSkills, PhysicalCondition, PastTrauma } from '@/types/user';
 
 const UserSummary = () => {
   const { userProfile } = useUser();
@@ -38,10 +38,10 @@ const UserSummary = () => {
     const badHabits = userProfile.badHabits?.filter(h => h !== BadHabit.NONE) || [];
     score -= badHabits.length * 5;
     
-    if (userProfile.pastTraumas?.includes('childhood')) score -= 5;
-    if (userProfile.pastTraumas?.includes('relationship')) score -= 3;
-    if (userProfile.pastTraumas?.includes('professional')) score -= 3;
-    if (userProfile.pastTraumas?.includes('loss')) score -= 3;
+    if (userProfile.pastTraumas?.includes(PastTrauma.CHILDHOOD)) score -= 5;
+    if (userProfile.pastTraumas?.includes(PastTrauma.RELATIONSHIP)) score -= 3;
+    if (userProfile.pastTraumas?.includes(PastTrauma.PROFESSIONAL)) score -= 3;
+    if (userProfile.pastTraumas?.includes(PastTrauma.LOSS)) score -= 3;
     
     // Asegurar que el puntaje final esté entre 0 y maxScore
     score = Math.max(0, Math.min(score, maxScore));

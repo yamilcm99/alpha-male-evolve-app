@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/context/UserContext';
@@ -466,7 +465,7 @@ const OnboardingForm = () => {
             <span className="text-sm">Paso {currentStep} de {totalSteps}</span>
             <span className="text-sm">{Math.round((currentStep / totalSteps) * 100)}%</span>
           </div>
-          <Progress value={(currentStep / totalSteps) * 100} className="h-2 bg-evolve-gray/30" indicatorClassName="bg-evolve-purple" />
+          <Progress value={(currentStep / totalSteps) * 100} className="h-2 bg-evolve-gray/30" />
         </div>
 
         {renderStep()}

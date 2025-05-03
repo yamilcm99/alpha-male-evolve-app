@@ -150,7 +150,9 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     if (!habit) return;
 
     achievements.forEach(achievement => {
-      if (achievement.category === habit.category && 
+      // Convertir la categoría del hábito a string para comparar con la categoría del logro
+      const habitCategory = habit.category.toString();
+      if (achievement.category.toString() === habitCategory && 
           habit.streak >= achievement.requirement && 
           !achievement.unlockedAt) {
         unlockAchievement(achievement.id);
