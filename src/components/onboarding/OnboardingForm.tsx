@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/context/UserContext';
@@ -47,7 +46,7 @@ const OnboardingForm = () => {
     communicationSkills: CommunicationSkills.INTERMEDIATE
   });
 
-  const totalSteps = 6; // Aumentado para incluir la nueva sección de adicciones
+  const totalSteps = 6;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -350,16 +349,18 @@ const OnboardingForm = () => {
                        habit === 'gambling' ? 'Juegos de azar' : ''}
                     </Label>
                     <RadioGroup
-                      value={formData.addictionLevels?.find(al => al.startsWith(`${habit}:`) || '') || ''}
-                      onValueChange={(value) => {
+                      value={formData.addictionLevels?.find(al => al.startsWith(`${habit}:`) || '')}
+                      onValueChange={(value: AddictionLevel) => {
                         setFormData(prev => {
                           const currentLevels = [...(prev.addictionLevels || [])];
+                          // Create a value that contains both habit and level
+                          const addictionValue = value;
                           const existingIndex = currentLevels.findIndex(l => l.startsWith(`${habit}:`));
                           
                           if (existingIndex >= 0) {
-                            currentLevels[existingIndex] = value;
+                            currentLevels[existingIndex] = addictionValue;
                           } else {
-                            currentLevels.push(value);
+                            currentLevels.push(addictionValue);
                           }
                           
                           return { ...prev, addictionLevels: currentLevels };
@@ -367,9 +368,9 @@ const OnboardingForm = () => {
                       }}
                       className="flex space-x-4"
                     >
-                      {Object.values(AddictionLevel).map((level) => (
+                      {Object.values(AddictionLevel).filter(level => level !== AddictionLevel.NONE).map((level) => (
                         <div key={`${habit}-${level}`} className="flex items-center">
-                          <RadioGroupItem value={`${habit}:${level}`} id={`addiction-${habit}-${level}`} />
+                          <RadioGroupItem value={`${habit}:${level}` as AddictionLevel} id={`addiction-${habit}-${level}`} />
                           <Label htmlFor={`addiction-${habit}-${level}`} className="ml-2">
                             {level === 'level_1' ? '1' :
                              level === 'level_2' ? '2' :

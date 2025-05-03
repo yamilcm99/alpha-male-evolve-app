@@ -1,3 +1,4 @@
+
 export type UserProfile = {
   id?: string;
   name: string;
@@ -71,7 +72,8 @@ export enum AddictionLevel {
   LEVEL_2 = "level_2",
   LEVEL_3 = "level_3",
   LEVEL_4 = "level_4",
-  LEVEL_5 = "level_5"
+  LEVEL_5 = "level_5",
+  NONE = "none"
 }
 
 export enum EmploymentStatus {
