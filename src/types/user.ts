@@ -115,6 +115,9 @@ export type Habit = {
   streak: number;
   lastCompleted: Date | null;
   goal: number;
+  cycleCompleted?: boolean; // Track if 21-day cycle is completed
+  cycleCompletedAt?: Date | null; // When the 21-day cycle was completed
+  cyclesCompleted?: number; // Number of 21-day cycles completed
 };
 
 export enum HabitCategory {

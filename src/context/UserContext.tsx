@@ -110,7 +110,18 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   };
 
   const addHabit = (habit: Habit) => {
-    setHabits((prev) => [...prev, habit]);
+    // Ensure the habit has all required fields with default values if missing
+    const completedHabit = {
+      ...habit,
+      streak: habit.streak || 0,
+      lastCompleted: habit.lastCompleted || null,
+      goal: habit.goal || 21, // Default to 21 days
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0
+    };
+    
+    setHabits((prev) => [...prev, completedHabit]);
   };
 
   const updateHabit = (updatedHabit: Habit) => {
@@ -121,10 +132,39 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     setHabits((prev) => 
       prev.map(habit => {
         if (habit.id === habitId) {
+          const newStreak = habit.streak + 1;
+          const now = new Date();
+          
+          // Check if this completion marks a full 21-day cycle
+          let cycleCompleted = habit.cycleCompleted || false;
+          let cycleCompletedAt = habit.cycleCompletedAt;
+          let cyclesCompleted = habit.cyclesCompleted || 0;
+          
+          // If streak equals goal (typically 21), mark cycle as completed
+          if (newStreak >= habit.goal && !habit.cycleCompleted) {
+            cycleCompleted = true;
+            cycleCompletedAt = now;
+            cyclesCompleted += 1;
+            
+            // Celebrate the achievement
+            toast.success(`¡Felicidades! Has completado tu ciclo de ${habit.goal} días para "${habit.name}". Este hábito ahora forma parte de tu rutina.`, {
+              duration: 6000
+            });
+            
+            // Unlock achievement for completing a habit cycle
+            const habitCycleAchievement = achievements.find(a => a.name === "Maestro de hábitos");
+            if (habitCycleAchievement && !habitCycleAchievement.unlockedAt) {
+              unlockAchievement(habitCycleAchievement.id);
+            }
+          }
+          
           return {
             ...habit,
-            streak: habit.streak + 1,
-            lastCompleted: new Date()
+            streak: newStreak,
+            lastCompleted: now,
+            cycleCompleted,
+            cycleCompletedAt,
+            cyclesCompleted
           };
         }
         return habit;

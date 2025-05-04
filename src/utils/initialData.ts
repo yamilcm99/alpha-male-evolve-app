@@ -22,7 +22,10 @@ export const createInitialHabits = (badHabits: BadHabit[]): Habit[] => {
       category: HabitCategory.ABSTINENCE,
       streak: 0,
       lastCompleted: null,
-      goal: 90
+      goal: 21, // 21 días para formar el hábito
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0
     });
   }
   
@@ -34,7 +37,10 @@ export const createInitialHabits = (badHabits: BadHabit[]): Habit[] => {
       category: HabitCategory.ABSTINENCE,
       streak: 0,
       lastCompleted: null,
-      goal: 30
+      goal: 21, // 21 días para formar el hábito
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0
     });
   }
   
@@ -46,7 +52,10 @@ export const createInitialHabits = (badHabits: BadHabit[]): Habit[] => {
       category: HabitCategory.ABSTINENCE,
       streak: 0,
       lastCompleted: null,
-      goal: 30
+      goal: 21, // 21 días para formar el hábito
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0
     });
   }
   
@@ -58,7 +67,10 @@ export const createInitialHabits = (badHabits: BadHabit[]): Habit[] => {
     category: HabitCategory.READING,
     streak: 0,
     lastCompleted: null,
-    goal: 30
+    goal: 21, // 21 días para formar el hábito
+    cycleCompleted: false,
+    cycleCompletedAt: null,
+    cyclesCompleted: 0
   });
   
   habits.push({
@@ -68,7 +80,10 @@ export const createInitialHabits = (badHabits: BadHabit[]): Habit[] => {
     category: HabitCategory.FITNESS,
     streak: 0,
     lastCompleted: null,
-    goal: 30
+    goal: 21, // 21 días para formar el hábito
+    cycleCompleted: false,
+    cycleCompletedAt: null,
+    cyclesCompleted: 0
   });
   
   habits.push({
@@ -78,7 +93,10 @@ export const createInitialHabits = (badHabits: BadHabit[]): Habit[] => {
     category: HabitCategory.SOCIAL,
     streak: 0,
     lastCompleted: null,
-    goal: 12
+    goal: 21, // 21 días para formar el hábito
+    cycleCompleted: false,
+    cycleCompletedAt: null,
+    cyclesCompleted: 0
   });
   
   return habits;
@@ -109,31 +127,41 @@ export const createInitialAchievements = (): Achievement[] => {
     {
       id: uuidv4(),
       name: "Maestro de la abstinencia",
-      description: "Mantén un hábito de abstinencia durante 30 días",
+      description: "Mantén un hábito de abstinencia durante 21 días",
       icon: "shield",
       unlockedAt: null,
       category: AchievementCategory.ABSTINENCE,
-      requirement: 30,
+      requirement: 21,
       currentProgress: 0
     },
     {
       id: uuidv4(),
       name: "Atleta en formación",
-      description: "Mantén un hábito de fitness durante 30 días",
+      description: "Mantén un hábito de fitness durante 21 días",
       icon: "activity",
       unlockedAt: null,
       category: AchievementCategory.FITNESS,
-      requirement: 30,
+      requirement: 21,
       currentProgress: 0
     },
     {
       id: uuidv4(),
       name: "Lector ávido",
-      description: "Mantén un hábito de lectura durante 30 días",
+      description: "Mantén un hábito de lectura durante 21 días",
       icon: "book",
       unlockedAt: null,
       category: AchievementCategory.READING,
-      requirement: 30,
+      requirement: 21,
+      currentProgress: 0
+    },
+    {
+      id: uuidv4(),
+      name: "Maestro de hábitos",
+      description: "Completa un ciclo completo de 21 días para cualquier hábito",
+      icon: "calendar-check",
+      unlockedAt: null,
+      category: AchievementCategory.OVERALL,
+      requirement: 21,
       currentProgress: 0
     }
   ];
@@ -187,6 +215,31 @@ export const createInitialGoals = (): Goal[] => {
         {
           id: uuidv4(),
           description: "Contactar a 5 personas de interés en mi industria",
+          completed: false
+        }
+      ]
+    },
+    {
+      id: uuidv4(),
+      title: "Desarrollar hábito de lectura diaria",
+      description: "Leer al menos 20 páginas diarias durante 21 días consecutivos",
+      category: "personal" as GoalCategory,
+      deadline: new Date(new Date().setDate(new Date().getDate() + 30)),
+      completed: false,
+      steps: [
+        {
+          id: uuidv4(),
+          description: "Seleccionar libros de desarrollo personal",
+          completed: false
+        },
+        {
+          id: uuidv4(),
+          description: "Reservar 30 minutos diarios para lectura",
+          completed: false
+        },
+        {
+          id: uuidv4(),
+          description: "Completar ciclo de 21 días",
           completed: false
         }
       ]
