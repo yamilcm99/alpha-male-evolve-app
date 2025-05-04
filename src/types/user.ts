@@ -1,3 +1,4 @@
+
 export type UserProfile = {
   id?: string;
   name: string;
@@ -22,7 +23,8 @@ export enum FamilyStatus {
   WITH_PARENTS = "with_parents",
   WITH_PARTNER = "with_partner",
   WITH_FAMILY = "with_family",
-  WITH_ROOMMATES = "with_roommates"
+  WITH_ROOMMATES = "with_roommates",
+  DIVORCED = "divorced" // Adding this to fix the error
 }
 
 export enum PhysicalCondition {
