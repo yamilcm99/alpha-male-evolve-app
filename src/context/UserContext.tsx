@@ -1,6 +1,9 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { UserProfile, Habit, Achievement, Goal } from '../types/user';
+import { createInitialHabits, createInitialAchievements, createInitialGoals } from '@/utils/initialData';
+import { toast } from '@/components/ui/sonner';
 
 type UserContextType = {
   userProfile: UserProfile | null;
@@ -76,10 +79,33 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   }, [userProfile, isOnboarded, habits, achievements, goals]);
 
   const setUserProfile = (profile: UserProfile) => {
-    setUserProfileState(profile);
+    // Ensure the profile has an ID
+    const profileWithId = {
+      ...profile,
+      id: profile.id || uuidv4()
+    };
+    
+    setUserProfileState(profileWithId);
   };
 
   const completeOnboarding = () => {
+    // Generate initial data based on the user profile
+    if (userProfile) {
+      // Initialize habits based on user's bad habits
+      const initialHabits = createInitialHabits(userProfile.badHabits);
+      setHabits(initialHabits);
+      
+      // Initialize achievements
+      const initialAchievements = createInitialAchievements();
+      setAchievements(initialAchievements);
+      
+      // Initialize goals
+      const initialGoals = createInitialGoals();
+      setGoals(initialGoals);
+      
+      toast.success("¡Perfil configurado con éxito! Se han creado hábitos y metas personalizadas.");
+    }
+    
     setIsOnboarded(true);
   };
 
@@ -105,6 +131,13 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       })
     );
 
+    // Check if this is the user's first completed habit
+    const firstHabitAchievement = achievements.find(a => a.name === "Primer Paso");
+    if (firstHabitAchievement && !firstHabitAchievement.unlockedAt) {
+      unlockAchievement(firstHabitAchievement.id);
+      toast.success("¡Logro desbloqueado: Primer Paso!");
+    }
+
     // Verificar si se desbloquea algún logro
     checkAchievements(habitId);
   };
@@ -129,6 +162,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         return goal;
       })
     );
+    
+    toast.success("¡Meta completada! ¡Felicidades!");
   };
 
   const unlockAchievement = (achievementId: string) => {
@@ -150,12 +185,25 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     if (!habit) return;
 
     achievements.forEach(achievement => {
-      // Convertir la categoría del hábito a string para comparar con la categoría del logro
-      const habitCategory = habit.category.toString();
-      if (achievement.category.toString() === habitCategory && 
+      // Check if the habit has reached the streak requirement for the achievement
+      // and if the achievement category matches the habit category
+      const habitCategory = habit.category.toString().toLowerCase();
+      const achievementCategory = achievement.category.toString().toLowerCase();
+      
+      // For overall category achievements
+      if (achievementCategory === "overall" && 
           habit.streak >= achievement.requirement && 
           !achievement.unlockedAt) {
         unlockAchievement(achievement.id);
+        toast.success(`¡Logro desbloqueado: ${achievement.name}!`);
+      }
+      
+      // For specific category achievements
+      if (habitCategory === achievementCategory && 
+          habit.streak >= achievement.requirement && 
+          !achievement.unlockedAt) {
+        unlockAchievement(achievement.id);
+        toast.success(`¡Logro desbloqueado: ${achievement.name}!`);
       }
     });
   };

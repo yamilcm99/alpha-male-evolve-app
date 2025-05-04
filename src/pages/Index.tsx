@@ -1,10 +1,23 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Award, User, Target, BarChart2, HeartHandshake } from 'lucide-react';
+import WelcomeModal from '@/components/welcome/WelcomeModal';
 
 const Index = () => {
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  
+  // Show welcome modal when the page loads
+  useEffect(() => {
+    // Show the modal after a short delay for better UX
+    const timer = setTimeout(() => {
+      setShowWelcomeModal(true);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-evolve-dark to-black text-white">
       <div className="container mx-auto px-4 py-20">
@@ -88,6 +101,9 @@ const Index = () => {
           </Button>
         </div>
       </div>
+      
+      {/* Welcome Modal */}
+      <WelcomeModal open={showWelcomeModal} onOpenChange={setShowWelcomeModal} />
     </div>
   );
 };
