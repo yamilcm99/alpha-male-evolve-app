@@ -18,6 +18,7 @@ export type UserProfile = {
   publicSpeaking: PublicSpeakingLevel;
   friendsCount: FriendsCount;
   femaleCommunication: CommunicationLevel;
+  updatedAt?: Date | string; // Added for 90-day profile updates
 };
 
 export enum FamilyStatus {

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { UserProfile, Habit, Achievement, Goal } from '../types/user';
@@ -79,10 +78,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   }, [userProfile, isOnboarded, habits, achievements, goals]);
 
   const setUserProfile = (profile: UserProfile) => {
-    // Ensure the profile has an ID
+    // Ensure the profile has an ID and updatedAt
     const profileWithId = {
       ...profile,
-      id: profile.id || uuidv4()
+      id: profile.id || uuidv4(),
+      updatedAt: profile.updatedAt || new Date().toISOString()
     };
     
     setUserProfileState(profileWithId);
