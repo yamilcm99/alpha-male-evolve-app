@@ -1,5 +1,5 @@
-
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useUser } from '@/context/UserContext';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -292,12 +292,12 @@ const PersonalRecommendations = () => {
             </div>
           ))}
           
-          <a 
-            href="/plan"
+          <Link 
+            to="/plan"
             className="block text-center text-evolve-purple hover:underline mt-2"
           >
             Ver plan completo
-          </a>
+          </Link>
         </div>
       </CardContent>
       <CardFooter className="border-t border-evolve-gray/20 pt-4">

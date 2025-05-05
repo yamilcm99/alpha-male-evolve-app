@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/context/UserContext';
@@ -14,7 +13,10 @@ import {
   EmploymentStatus, 
   IncomeLevel, 
   RelationshipStatus,
-  CommunicationSkills
+  CommunicationSkills,
+  PublicSpeakingLevel,
+  FriendsCount,
+  CommunicationLevel
 } from '@/types/user';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -44,10 +46,13 @@ const OnboardingForm = () => {
     employmentStatus: EmploymentStatus.EMPLOYED,
     income: IncomeLevel.MEDIUM,
     relationshipStatus: RelationshipStatus.SINGLE,
-    communicationSkills: CommunicationSkills.INTERMEDIATE
+    communicationSkills: CommunicationSkills.INTERMEDIATE,
+    publicSpeaking: PublicSpeakingLevel.NEUTRAL,
+    friendsCount: FriendsCount.AVERAGE,
+    femaleCommunication: CommunicationLevel.AVERAGE
   });
 
-  const totalSteps = 6;
+  const totalSteps = 7;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -508,11 +513,11 @@ const OnboardingForm = () => {
       case 6:
         return (
           <div className="space-y-6">
-            <h3 className="text-xl font-semibold mb-4">Comunicación e Interacción Social</h3>
+            <h3 className="text-xl font-semibold mb-4">Habilidades de Comunicación</h3>
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label>Habilidades de Comunicación</Label>
+                <Label>Nivel general de comunicación</Label>
                 <div className="flex flex-col space-y-2">
                   {Object.values(CommunicationSkills).map((skill) => (
                     <div key={skill} className="flex items-center space-x-2">
@@ -534,34 +539,119 @@ const OnboardingForm = () => {
                 </div>
               </div>
 
-              <div className="mt-8 p-4 bg-evolve-dark/60 rounded-lg border border-evolve-purple/20">
-                <h4 className="font-semibold text-lg mb-2">Resumen del Perfil</h4>
-                <p>Nombre: {formData.name}</p>
-                <p>Edad: {formData.age}</p>
-                <p>Con quién vives: {
-                  formData.familyStatus === FamilyStatus.LIVES_ALONE ? 'Solo' :
-                  formData.familyStatus === FamilyStatus.WITH_PARENTS ? 'Con padres' :
-                  formData.familyStatus === FamilyStatus.WITH_PARTNER ? 'Con pareja' :
-                  formData.familyStatus === FamilyStatus.WITH_FAMILY ? 'Con familia' : 'Con compañeros'
-                }</p>
-                <p>Estado de Relación: {
-                  formData.relationshipStatus === RelationshipStatus.SINGLE ? 'Soltero' :
-                  formData.relationshipStatus === RelationshipStatus.IN_RELATIONSHIP ? 'En una relación' :
-                  formData.relationshipStatus === RelationshipStatus.MARRIED ? 'Casado' :
-                  formData.relationshipStatus === RelationshipStatus.DIVORCED ? 'Divorciado' : 'Viudo'
-                }</p>
-                <p>Etapa vital: {
-                  formData.lifeStage === LifeStage.ASCENT ? 'En ascenso' :
-                  formData.lifeStage === LifeStage.DESCENT ? 'En bajada' :
-                  formData.lifeStage === LifeStage.PLATEAU ? 'En meseta' :
-                  formData.lifeStage === LifeStage.UNSTABLE ? 'Inestable' : 'Crítica'
-                }</p>
-                <p>Habilidades de Comunicación: {
-                  formData.communicationSkills === CommunicationSkills.BEGINNER ? 'Principiante' :
-                  formData.communicationSkills === CommunicationSkills.INTERMEDIATE ? 'Intermedio' :
-                  formData.communicationSkills === CommunicationSkills.ADVANCED ? 'Avanzado' : 'Experto'
-                }</p>
+              <div className="space-y-2">
+                <Label>¿Cómo te sientes hablando en público?</Label>
+                <div className="flex flex-col space-y-2">
+                  {Object.values(PublicSpeakingLevel).map((level) => (
+                    <div key={level} className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        id={getUniqueId('publicSpeaking', level)}
+                        value={level}
+                        checked={formData.publicSpeaking === level}
+                        onChange={() => handleSingleSelectChange('publicSpeaking', level)}
+                        className="text-evolve-purple focus:ring-evolve-purple"
+                      />
+                      <Label htmlFor={getUniqueId('publicSpeaking', level)}>
+                        {level === 'fearful' ? 'Me da miedo, lo evito a toda costa' :
+                          level === 'uncomfortable' ? 'Me siento incómodo pero puedo hacerlo' :
+                          level === 'neutral' ? 'No me afecta especialmente' :
+                          level === 'comfortable' ? 'Me siento cómodo' : 'Me encanta, disfruto haciéndolo'}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
               </div>
+
+              <div className="space-y-2">
+                <Label>¿Cuántos amigos cercanos tienes?</Label>
+                <div className="flex flex-col space-y-2">
+                  {Object.values(FriendsCount).map((count) => (
+                    <div key={count} className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        id={getUniqueId('friendsCount', count)}
+                        value={count}
+                        checked={formData.friendsCount === count}
+                        onChange={() => handleSingleSelectChange('friendsCount', count)}
+                        className="text-evolve-purple focus:ring-evolve-purple"
+                      />
+                      <Label htmlFor={getUniqueId('friendsCount', count)}>
+                        {count === 'none' ? 'Ninguno' :
+                          count === 'few' ? '1-2 amigos cercanos' :
+                          count === 'average' ? '3-5 amigos cercanos' :
+                          count === 'many' ? '6-10 amigos cercanos' : 'Más de 10 amigos cercanos'}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>¿Cómo es tu comunicación con mujeres?</Label>
+                <div className="flex flex-col space-y-2">
+                  {Object.values(CommunicationLevel).map((level) => (
+                    <div key={level} className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        id={getUniqueId('femaleCommunication', level)}
+                        value={level}
+                        checked={formData.femaleCommunication === level}
+                        onChange={() => handleSingleSelectChange('femaleCommunication', level)}
+                        className="text-evolve-purple focus:ring-evolve-purple"
+                      />
+                      <Label htmlFor={getUniqueId('femaleCommunication', level)}>
+                        {level === 'very_bad' ? 'Muy mala, me bloqueo o evito hablarles' :
+                          level === 'bad' ? 'Mala, me cuesta iniciar y mantener conversaciones' :
+                          level === 'average' ? 'Normal, puedo mantener conversaciones casuales' :
+                          level === 'good' ? 'Buena, me siento cómodo conversando con ellas' : 'Excelente, tengo gran facilidad para conectar con ellas'}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 7:
+        return (
+          <div className="space-y-6">
+            <h3 className="text-xl font-semibold mb-4">Resumen del Perfil</h3>
+
+            <div className="mt-8 p-4 bg-evolve-dark/60 rounded-lg border border-evolve-purple/20">
+              <h4 className="font-semibold text-lg mb-2">Resumen del Perfil</h4>
+              <p>Nombre: {formData.name}</p>
+              <p>Edad: {formData.age}</p>
+              <p>Con quién vives: {
+                formData.familyStatus === FamilyStatus.LIVES_ALONE ? 'Solo' :
+                formData.familyStatus === FamilyStatus.WITH_PARENTS ? 'Con padres' :
+                formData.familyStatus === FamilyStatus.WITH_PARTNER ? 'Con pareja' :
+                formData.familyStatus === FamilyStatus.WITH_FAMILY ? 'Con familia' : 'Con compañeros'
+              }</p>
+              <p>Estado de Relación: {
+                formData.relationshipStatus === RelationshipStatus.SINGLE ? 'Soltero' :
+                formData.relationshipStatus === RelationshipStatus.IN_RELATIONSHIP ? 'En una relación' :
+                formData.relationshipStatus === RelationshipStatus.MARRIED ? 'Casado' :
+                formData.relationshipStatus === RelationshipStatus.DIVORCED ? 'Divorciado' : 'Viudo'
+              }</p>
+              <p>Etapa vital: {
+                formData.lifeStage === LifeStage.ASCENT ? 'En ascenso' :
+                formData.lifeStage === LifeStage.DESCENT ? 'En bajada' :
+                formData.lifeStage === LifeStage.PLATEAU ? 'En meseta' :
+                formData.lifeStage === LifeStage.UNSTABLE ? 'Inestable' : 'Crítica'
+              }</p>
+              <p>Habilidades de Comunicación: {
+                formData.communicationSkills === CommunicationSkills.BEGINNER ? 'Principiante' :
+                formData.communicationSkills === CommunicationSkills.INTERMEDIATE ? 'Intermedio' :
+                formData.communicationSkills === CommunicationSkills.ADVANCED ? 'Avanzado' : 'Experto'
+              }</p>
+              <p>Comunicación con mujeres: {
+                formData.femaleCommunication === CommunicationLevel.VERY_BAD ? 'Muy mala' :
+                formData.femaleCommunication === CommunicationLevel.BAD ? 'Mala' :
+                formData.femaleCommunication === CommunicationLevel.AVERAGE ? 'Normal' :
+                formData.femaleCommunication === CommunicationLevel.GOOD ? 'Buena' : 'Excelente'
+              }</p>
             </div>
           </div>
         );

@@ -5,6 +5,7 @@ import UserSummary from '@/components/dashboard/UserSummary';
 import HabitTracker from '@/components/dashboard/HabitTracker';
 import AchievementsList from '@/components/dashboard/AchievementsList';
 import PersonalRecommendations from '@/components/dashboard/PersonalRecommendations';
+import UserStats from '@/components/dashboard/UserStats';
 
 const DashboardPage = () => {
   return (
@@ -20,6 +21,9 @@ const DashboardPage = () => {
         </div>
         <div className="md:col-span-8">
           <PersonalRecommendations />
+        </div>
+        <div className="md:col-span-4">
+          <UserStats />
         </div>
         <div className="md:col-span-8">
           <HabitTracker />

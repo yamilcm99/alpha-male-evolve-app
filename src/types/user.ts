@@ -1,4 +1,3 @@
-
 export type UserProfile = {
   id?: string;
   name: string;
@@ -16,6 +15,9 @@ export type UserProfile = {
   income: IncomeLevel;
   relationshipStatus: RelationshipStatus;
   communicationSkills: CommunicationSkills;
+  publicSpeaking: PublicSpeakingLevel;
+  friendsCount: FriendsCount;
+  femaleCommunication: CommunicationLevel;
 };
 
 export enum FamilyStatus {
@@ -24,7 +26,7 @@ export enum FamilyStatus {
   WITH_PARTNER = "with_partner",
   WITH_FAMILY = "with_family",
   WITH_ROOMMATES = "with_roommates",
-  DIVORCED = "divorced" // Adding this to fix the error
+  DIVORCED = "divorced"
 }
 
 export enum PhysicalCondition {
@@ -105,6 +107,30 @@ export enum CommunicationSkills {
   INTERMEDIATE = "intermediate",
   ADVANCED = "advanced",
   EXPERT = "expert"
+}
+
+export enum PublicSpeakingLevel {
+  FEARFUL = "fearful",
+  UNCOMFORTABLE = "uncomfortable",
+  NEUTRAL = "neutral",
+  COMFORTABLE = "comfortable",
+  CONFIDENT = "confident"
+}
+
+export enum FriendsCount {
+  NONE = "none",
+  FEW = "few",
+  AVERAGE = "average",
+  MANY = "many",
+  VERY_MANY = "very_many"
+}
+
+export enum CommunicationLevel {
+  VERY_BAD = "very_bad",
+  BAD = "bad",
+  AVERAGE = "average",
+  GOOD = "good",
+  EXCELLENT = "excellent"
 }
 
 export type Habit = {
