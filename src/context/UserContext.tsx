@@ -1,81 +1,56 @@
+
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { UserProfile, Habit, Achievement, Goal } from '../types/user';
-import { createInitialHabits, createInitialAchievements, createInitialGoals } from '@/utils/initialData';
+import { UserProfile } from '../types/user';
 import { toast } from '@/components/ui/sonner';
+import { HabitsProvider, useHabits } from './HabitsContext';
+import { AchievementsProvider, useAchievements } from './AchievementsContext';
+import { GoalsProvider, useGoals } from './GoalsContext';
 
 type UserContextType = {
   userProfile: UserProfile | null;
   isOnboarded: boolean;
-  habits: Habit[];
-  achievements: Achievement[];
-  goals: Goal[];
   setUserProfile: (profile: UserProfile) => void;
   completeOnboarding: () => void;
-  addHabit: (habit: Habit) => void;
-  updateHabit: (habit: Habit) => void;
-  completeHabit: (habitId: string) => void;
-  addGoal: (goal: Goal) => void;
-  updateGoal: (goal: Goal) => void;
-  completeGoal: (goalId: string) => void;
-  unlockAchievement: (achievementId: string) => void;
 };
 
 const defaultUserContext: UserContextType = {
   userProfile: null,
   isOnboarded: false,
-  habits: [],
-  achievements: [],
-  goals: [],
   setUserProfile: () => {},
   completeOnboarding: () => {},
-  addHabit: () => {},
-  updateHabit: () => {},
-  completeHabit: () => {},
-  addGoal: () => {},
-  updateGoal: () => {},
-  completeGoal: () => {},
-  unlockAchievement: () => {},
 };
 
 const UserContext = createContext<UserContextType>(defaultUserContext);
 
 export const useUser = () => useContext(UserContext);
 
-type UserProviderProps = {
+type InnerUserProviderProps = {
   children: ReactNode;
 };
 
-export const UserProvider = ({ children }: UserProviderProps) => {
+const InnerUserProvider = ({ children }: InnerUserProviderProps) => {
   const [userProfile, setUserProfileState] = useState<UserProfile | null>(null);
   const [isOnboarded, setIsOnboarded] = useState<boolean>(false);
-  const [habits, setHabits] = useState<Habit[]>([]);
-  const [achievements, setAchievements] = useState<Achievement[]>([]);
-  const [goals, setGoals] = useState<Goal[]>([]);
+  
+  const { initializeHabits } = useHabits();
+  const { initializeAchievements } = useAchievements();
+  const { initializeGoals } = useGoals();
 
-  // Cargar datos del almacenamiento local si existen
+  // Load data from localStorage if it exists
   useEffect(() => {
     const storedProfile = localStorage.getItem('userProfile');
     const storedOnboarded = localStorage.getItem('isOnboarded');
-    const storedHabits = localStorage.getItem('habits');
-    const storedAchievements = localStorage.getItem('achievements');
-    const storedGoals = localStorage.getItem('goals');
 
     if (storedProfile) setUserProfileState(JSON.parse(storedProfile));
     if (storedOnboarded) setIsOnboarded(JSON.parse(storedOnboarded));
-    if (storedHabits) setHabits(JSON.parse(storedHabits));
-    if (storedAchievements) setAchievements(JSON.parse(storedAchievements));
-    if (storedGoals) setGoals(JSON.parse(storedGoals));
   }, []);
 
-  // Guardar datos en el almacenamiento local
+  // Save data to localStorage
   useEffect(() => {
     if (userProfile) localStorage.setItem('userProfile', JSON.stringify(userProfile));
     localStorage.setItem('isOnboarded', JSON.stringify(isOnboarded));
-    if (habits.length) localStorage.setItem('habits', JSON.stringify(habits));
-    if (achievements.length) localStorage.setItem('achievements', JSON.stringify(achievements));
-    if (goals.length) localStorage.setItem('goals', JSON.stringify(goals));
-  }, [userProfile, isOnboarded, habits, achievements, goals]);
+  }, [userProfile, isOnboarded]);
 
   const setUserProfile = (profile: UserProfile) => {
     // Ensure the profile has an ID and updatedAt
@@ -91,17 +66,10 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const completeOnboarding = () => {
     // Generate initial data based on the user profile
     if (userProfile) {
-      // Initialize habits based on user's bad habits
-      const initialHabits = createInitialHabits(userProfile.badHabits);
-      setHabits(initialHabits);
-      
-      // Initialize achievements
-      const initialAchievements = createInitialAchievements();
-      setAchievements(initialAchievements);
-      
-      // Initialize goals
-      const initialGoals = createInitialGoals();
-      setGoals(initialGoals);
+      // Initialize habits, achievements, and goals
+      initializeHabits(userProfile);
+      initializeAchievements();
+      initializeGoals();
       
       toast.success("¡Perfil configurado con éxito! Se han creado hábitos y metas personalizadas.");
     }
@@ -109,146 +77,46 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     setIsOnboarded(true);
   };
 
-  const addHabit = (habit: Habit) => {
-    // Ensure the habit has all required fields with default values if missing
-    const completedHabit = {
-      ...habit,
-      streak: habit.streak || 0,
-      lastCompleted: habit.lastCompleted || null,
-      goal: habit.goal || 21, // Default to 21 days
-      cycleCompleted: false,
-      cycleCompletedAt: null,
-      cyclesCompleted: 0
-    };
-    
-    setHabits((prev) => [...prev, completedHabit]);
-  };
-
-  const updateHabit = (updatedHabit: Habit) => {
-    setHabits((prev) => prev.map(habit => habit.id === updatedHabit.id ? updatedHabit : habit));
-  };
-
-  const completeHabit = (habitId: string) => {
-    setHabits((prev) => 
-      prev.map(habit => {
-        if (habit.id === habitId) {
-          const newStreak = habit.streak + 1;
-          const now = new Date();
-          
-          // Check if this completion marks a full 21-day cycle
-          let cycleCompleted = habit.cycleCompleted || false;
-          let cycleCompletedAt = habit.cycleCompletedAt;
-          let cyclesCompleted = habit.cyclesCompleted || 0;
-          
-          // If streak equals goal (typically 21), mark cycle as completed
-          if (newStreak >= habit.goal && !habit.cycleCompleted) {
-            cycleCompleted = true;
-            cycleCompletedAt = now;
-            cyclesCompleted += 1;
-            
-            // Celebrate the achievement
-            toast.success(`¡Felicidades! Has completado tu ciclo de ${habit.goal} días para "${habit.name}". Este hábito ahora forma parte de tu rutina.`, {
-              duration: 6000
-            });
-            
-            // Unlock achievement for completing a habit cycle
-            const habitCycleAchievement = achievements.find(a => a.name === "Maestro de hábitos");
-            if (habitCycleAchievement && !habitCycleAchievement.unlockedAt) {
-              unlockAchievement(habitCycleAchievement.id);
-            }
-          }
-          
-          return {
-            ...habit,
-            streak: newStreak,
-            lastCompleted: now,
-            cycleCompleted,
-            cycleCompletedAt,
-            cyclesCompleted
-          };
-        }
-        return habit;
-      })
-    );
-
-    // Check if this is the user's first completed habit
-    const firstHabitAchievement = achievements.find(a => a.name === "Primer Paso");
-    if (firstHabitAchievement && !firstHabitAchievement.unlockedAt) {
-      unlockAchievement(firstHabitAchievement.id);
-      toast.success("¡Logro desbloqueado: Primer Paso!");
-    }
-
-    // Verificar si se desbloquea algún logro
-    checkAchievements(habitId);
-  };
-
-  const addGoal = (goal: Goal) => {
-    setGoals((prev) => [...prev, goal]);
-  };
-
-  const updateGoal = (updatedGoal: Goal) => {
-    setGoals((prev) => prev.map(goal => goal.id === updatedGoal.id ? updatedGoal : goal));
-  };
-
-  const completeGoal = (goalId: string) => {
-    setGoals((prev) => 
-      prev.map(goal => {
-        if (goal.id === goalId) {
-          return {
-            ...goal,
-            completed: true
-          };
-        }
-        return goal;
-      })
-    );
-    
-    toast.success("¡Meta completada! ¡Felicidades!");
-  };
-
-  const unlockAchievement = (achievementId: string) => {
-    setAchievements((prev) => 
-      prev.map(achievement => {
-        if (achievement.id === achievementId && !achievement.unlockedAt) {
-          return {
-            ...achievement,
-            unlockedAt: new Date()
-          };
-        }
-        return achievement;
-      })
-    );
-  };
-
-  const checkAchievements = (habitId: string) => {
-    const habit = habits.find(h => h.id === habitId);
-    if (!habit) return;
-
-    achievements.forEach(achievement => {
-      // Check if the habit has reached the streak requirement for the achievement
-      // and if the achievement category matches the habit category
-      const habitCategory = habit.category.toString().toLowerCase();
-      const achievementCategory = achievement.category.toString().toLowerCase();
-      
-      // For overall category achievements
-      if (achievementCategory === "overall" && 
-          habit.streak >= achievement.requirement && 
-          !achievement.unlockedAt) {
-        unlockAchievement(achievement.id);
-        toast.success(`¡Logro desbloqueado: ${achievement.name}!`);
-      }
-      
-      // For specific category achievements
-      if (habitCategory === achievementCategory && 
-          habit.streak >= achievement.requirement && 
-          !achievement.unlockedAt) {
-        unlockAchievement(achievement.id);
-        toast.success(`¡Logro desbloqueado: ${achievement.name}!`);
-      }
-    });
-  };
-
   const value = {
+    userProfile,
+    isOnboarded,
+    setUserProfile,
+    completeOnboarding,
+  };
+
+  return (
+    <UserContext.Provider value={value}>
+      {children}
+    </UserContext.Provider>
+  );
+};
+
+type UserProviderProps = {
+  children: ReactNode;
+};
+
+export const UserProvider = ({ children }: UserProviderProps) => {
+  return (
+    <AchievementsProvider>
+      <HabitsProvider>
+        <GoalsProvider>
+          <InnerUserProvider>
+            {children}
+          </InnerUserProvider>
+        </GoalsProvider>
+      </HabitsProvider>
+    </AchievementsProvider>
+  );
+};
+
+// Export a combined hook for components that need access to all contexts
+export const useUserData = () => {
+  const { userProfile, isOnboarded, setUserProfile, completeOnboarding } = useUser();
+  const { habits, addHabit, updateHabit, completeHabit } = useHabits();
+  const { achievements, unlockAchievement } = useAchievements();
+  const { goals, addGoal, updateGoal, completeGoal } = useGoals();
+
+  return {
     userProfile,
     isOnboarded,
     habits,
@@ -264,10 +132,4 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     completeGoal,
     unlockAchievement
   };
-
-  return (
-    <UserContext.Provider value={value}>
-      {children}
-    </UserContext.Provider>
-  );
 };

@@ -1,14 +1,13 @@
-
 import React from 'react';
-import { useUser } from '@/context/UserContext';
+import { useHabits } from '@/context/HabitsContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Check, X } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { HabitCategory } from '@/types/user';
 import { toast } from '@/components/ui/sonner';
 
 const HabitTracker = () => {
-  const { habits, completeHabit } = useUser();
+  const { habits, completeHabit } = useHabits();
   
   const handleComplete = (habitId: string) => {
     completeHabit(habitId);

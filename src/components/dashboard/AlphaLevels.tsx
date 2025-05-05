@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useUser } from '@/context/UserContext';
 import { Card, CardContent } from '@/components/ui/card';
@@ -8,6 +7,7 @@ import { calculateUserLevel } from '@/utils/userLevelCalculator';
 
 const AlphaLevels = () => {
   const { userProfile } = useUser();
+  
   const levels = [
     { name: "Principiante", description: "Comienzo del camino de evolución", minScore: 0, maxScore: 20, color: "bg-red-500" },
     { name: "Aprendiz", description: "Aprendiendo los fundamentos", minScore: 21, maxScore: 40, color: "bg-orange-500" },

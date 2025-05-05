@@ -10,10 +10,15 @@ import UserStats from '@/components/dashboard/UserStats';
 import { useUser } from '@/context/UserContext';
 import { toast } from '@/components/ui/sonner';
 import AlphaLevels from '@/components/dashboard/AlphaLevels';
+import HabitProgressChart from '@/components/dashboard/HabitProgressChart';
+import HabitCalendarView from '@/components/dashboard/HabitCalendarView';
+import ProgressStats from '@/components/dashboard/ProgressStats';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const DashboardPage = () => {
   const { userProfile, isOnboarded } = useUser();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   // Check if user is onboarded
   useEffect(() => {
@@ -62,7 +67,7 @@ const DashboardPage = () => {
           <UserSummary />
         </div>
         <div className="md:col-span-8">
-          <PersonalRecommendations />
+          <ProgressStats />
         </div>
         <div className="md:col-span-4">
           <UserStats />
@@ -70,8 +75,17 @@ const DashboardPage = () => {
         <div className="md:col-span-8">
           <HabitTracker />
         </div>
+        <div className="md:col-span-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <HabitProgressChart />
+            <HabitCalendarView />
+          </div>
+        </div>
         <div className="md:col-span-4">
           <AchievementsList />
+        </div>
+        <div className="md:col-span-8">
+          <PersonalRecommendations />
         </div>
       </div>
     </PageLayout>
