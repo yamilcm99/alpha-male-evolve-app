@@ -1,6 +1,8 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '@/context/UserContext';
+import { useHabits } from '@/context/HabitsContext';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
@@ -17,7 +19,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { toast } from '@/components/ui/sonner';
 
 const PersonalRecommendations = () => {
-  const { userProfile, addHabit, habits } = useUser();
+  const { userProfile } = useUser();
+  const { addHabit, habits } = useHabits();
 
   if (!userProfile) {
     return null;

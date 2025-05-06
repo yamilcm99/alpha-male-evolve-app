@@ -1,13 +1,12 @@
-
 import React from 'react';
-import { useUser } from '@/context/UserContext';
+import { useAchievements } from '@/context/AchievementsContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AchievementCategory } from '@/types/user';
 import { Badge } from '@/components/ui/badge';
 import { Award, Lock } from 'lucide-react';
 
 const AchievementsList = () => {
-  const { achievements } = useUser();
+  const { achievements } = useAchievements();
 
   const getCategoryName = (category: AchievementCategory) => {
     switch (category) {
@@ -51,7 +50,7 @@ const AchievementsList = () => {
     }
   };
 
-  if (!achievements.length) {
+  if (!achievements || !achievements.length) {
     return (
       <Card className="bg-evolve-dark/75 border-evolve-purple/30 text-white">
         <CardHeader>
