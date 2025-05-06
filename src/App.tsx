@@ -10,6 +10,7 @@ import DashboardPage from "./pages/DashboardPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import PlanPage from "./pages/PlanPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import AICoachPage from "./pages/AICoachPage";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
             <Route path="/onboarding" element={<OnboardingPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/plan" element={<PlanPage />} />
+            <Route path="/ai-coach" element={<AICoachPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </BrowserRouter>
