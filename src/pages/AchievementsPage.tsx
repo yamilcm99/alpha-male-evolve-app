@@ -1,7 +1,9 @@
 
 import React from 'react';
 import PageLayout from '@/components/layout/PageLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import AchievementsList from '@/components/achievements/AchievementsList';
+import AchievementsProgress from '@/components/achievements/AchievementsProgress';
 
 const AchievementsPage = () => {
   return (
@@ -11,14 +13,20 @@ const AchievementsPage = () => {
         <p className="text-gray-300">Visualiza y celebra tus logros alcanzados</p>
       </div>
       
-      <Card className="bg-evolve-dark/75 border-evolve-purple/30 text-white">
-        <CardHeader>
-          <CardTitle>Logros Desbloqueados</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>Contenido de logros estará disponible pronto.</p>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="list">
+        <TabsList className="bg-evolve-dark/50 mb-6">
+          <TabsTrigger value="list">Mis Logros</TabsTrigger>
+          <TabsTrigger value="progress">Progreso</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="list">
+          <AchievementsList />
+        </TabsContent>
+        
+        <TabsContent value="progress">
+          <AchievementsProgress />
+        </TabsContent>
+      </Tabs>
     </PageLayout>
   );
 };

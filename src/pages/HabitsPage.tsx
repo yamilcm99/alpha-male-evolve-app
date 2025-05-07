@@ -2,6 +2,10 @@
 import React from 'react';
 import PageLayout from '@/components/layout/PageLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import HabitForm from '@/components/habits/HabitForm';
+import HabitsList from '@/components/habits/HabitsList';
+import HabitsProgress from '@/components/habits/HabitsProgress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const HabitsPage = () => {
   return (
@@ -11,14 +15,25 @@ const HabitsPage = () => {
         <p className="text-gray-300">Seguimiento y gestión de tus hábitos diarios</p>
       </div>
       
-      <Card className="bg-evolve-dark/75 border-evolve-purple/30 text-white">
-        <CardHeader>
-          <CardTitle>Seguimiento de Hábitos</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>Contenido de hábitos estará disponible pronto.</p>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="list">
+        <TabsList className="bg-evolve-dark/50 mb-6">
+          <TabsTrigger value="list">Lista de Hábitos</TabsTrigger>
+          <TabsTrigger value="progress">Progreso</TabsTrigger>
+          <TabsTrigger value="new">Nuevo Hábito</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="list">
+          <HabitsList />
+        </TabsContent>
+        
+        <TabsContent value="progress">
+          <HabitsProgress />
+        </TabsContent>
+        
+        <TabsContent value="new">
+          <HabitForm />
+        </TabsContent>
+      </Tabs>
     </PageLayout>
   );
 };
