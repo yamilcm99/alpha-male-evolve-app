@@ -11,6 +11,11 @@ import OnboardingPage from "./pages/OnboardingPage";
 import PlanPage from "./pages/PlanPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import AICoachPage from "./pages/AICoachPage";
+import HabitsPage from "./pages/HabitsPage";
+import AchievementsPage from "./pages/AchievementsPage";
+import GoalsPage from "./pages/GoalsPage";
+import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +32,11 @@ const App = () => (
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/plan" element={<PlanPage />} />
             <Route path="/ai-coach" element={<AICoachPage />} />
+            <Route path="/habits" element={<HabitsPage />} />
+            <Route path="/achievements" element={<AchievementsPage />} />
+            <Route path="/goals" element={<GoalsPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </BrowserRouter>

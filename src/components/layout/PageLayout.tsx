@@ -3,6 +3,9 @@ import React, { ReactNode } from 'react';
 import { useUser } from '@/context/UserContext';
 import { Navigate } from 'react-router-dom';
 import NavBar from './NavBar';
+import Breadcrumbs from './Breadcrumbs';
+import AppSidebar from './Sidebar';
+import { SidebarProvider, SidebarTrigger, SidebarRail, SidebarInset } from '@/components/ui/sidebar';
 
 type PageLayoutProps = {
   children: ReactNode;
@@ -18,12 +21,19 @@ const PageLayout = ({ children, requiresOnboarding = true }: PageLayoutProps) =>
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-evolve-dark to-black text-white">
-      <NavBar />
-      <main className="flex-grow p-4 md:p-6">
-        {children}
-      </main>
-    </div>
+    <SidebarProvider defaultOpen={true}>
+      <div className="min-h-screen flex w-full bg-gradient-to-b from-evolve-dark to-black text-white">
+        <AppSidebar />
+        <SidebarRail />
+        <SidebarInset className="flex flex-col">
+          <NavBar />
+          <main className="flex-grow p-4 md:p-6">
+            <Breadcrumbs />
+            {children}
+          </main>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 };
 
