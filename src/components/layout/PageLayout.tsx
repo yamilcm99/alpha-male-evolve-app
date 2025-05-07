@@ -60,9 +60,10 @@ const PageLayout = ({ children, requiresOnboarding = true }: PageLayoutProps) =>
         <AppSidebar />
         <SidebarRail />
         <SidebarInset className="flex flex-col">
-          <NavBar>
+          <NavBar />
+          <div className="absolute top-3 right-16">
             <NotificationsPopover />
-          </NavBar>
+          </div>
           <main className="flex-grow p-4 md:p-6">
             <Breadcrumbs />
             {children}
