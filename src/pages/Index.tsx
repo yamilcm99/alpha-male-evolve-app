@@ -1,12 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Award, User, Target, BarChart2, HeartHandshake } from 'lucide-react';
 import WelcomeModal from '@/components/welcome/WelcomeModal';
+import { useUser } from '@/context/UserContext';
 
 const Index = () => {
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  const navigate = useNavigate();
+  const { isOnboarded } = useUser();
   
   // Show welcome modal when the page loads
   useEffect(() => {
@@ -17,6 +20,14 @@ const Index = () => {
     
     return () => clearTimeout(timer);
   }, []);
+
+  const handleBeginNow = () => {
+    if (isOnboarded) {
+      navigate('/dashboard');
+    } else {
+      navigate('/onboarding');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-evolve-dark to-black text-white">
@@ -29,10 +40,11 @@ const Index = () => {
             La plataforma definitiva para hombres que buscan evolucionar en todas las áreas de su vida.
           </p>
           <div className="mt-8">
-            <Button asChild className="bg-evolve-purple hover:bg-evolve-purple/80 text-lg px-8 py-6">
-              <Link to="/onboarding" className="inline-flex items-center">
-                Comenzar ahora <ArrowRight className="ml-2" />
-              </Link>
+            <Button 
+              onClick={handleBeginNow}
+              className="bg-evolve-purple hover:bg-evolve-purple/80 text-lg px-8 py-6"
+            >
+              Comenzar ahora <ArrowRight className="ml-2" />
             </Button>
           </div>
         </div>
@@ -94,10 +106,11 @@ const Index = () => {
 
         <div className="text-center">
           <h2 className="text-2xl md:text-3xl font-bold mb-6">¿Listo para evolucionar?</h2>
-          <Button asChild className="bg-evolve-purple hover:bg-evolve-purple/80 text-lg">
-            <Link to="/onboarding">
-              Comenzar mi transformación
-            </Link>
+          <Button 
+            onClick={() => navigate('/onboarding')}
+            className="bg-evolve-purple hover:bg-evolve-purple/80 text-lg"
+          >
+            Comenzar mi transformación
           </Button>
         </div>
       </div>

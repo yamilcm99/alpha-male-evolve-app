@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '@/context/UserContext';
 
 type WelcomeModalProps = {
@@ -15,13 +15,27 @@ const WelcomeModal = ({ open, onOpenChange }: WelcomeModalProps) => {
   const { userProfile, isOnboarded } = useUser();
   const [step, setStep] = useState(1);
   const totalSteps = 3;
+  const navigate = useNavigate();
 
   const handleNextStep = () => {
     if (step < totalSteps) {
       setStep(step + 1);
     } else {
+      // En lugar de solo cerrar el modal, manejamos la navegación aquí
       onOpenChange(false);
     }
+  };
+
+  const handleCompleteProfile = () => {
+    onOpenChange(false);
+    // Usamos navigate para ir a onboarding de forma programática
+    navigate('/onboarding');
+  };
+
+  const handleGoToDashboard = () => {
+    onOpenChange(false);
+    // Usamos navigate para ir a dashboard de forma programática
+    navigate('/dashboard');
   };
 
   const renderStepContent = () => {
@@ -108,22 +122,39 @@ const WelcomeModal = ({ open, onOpenChange }: WelcomeModalProps) => {
         {renderStepContent()}
         <DialogFooter>
           <div className="w-full flex flex-col space-y-2">
-            <Button 
-              onClick={handleNextStep} 
-              className="w-full bg-evolve-purple hover:bg-evolve-purple/80 text-white"
-            >
-              {step < totalSteps ? 'Continuar' : 'Entendido'} <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            {step < totalSteps ? (
+              <Button 
+                onClick={handleNextStep} 
+                className="w-full bg-evolve-purple hover:bg-evolve-purple/80 text-white"
+              >
+                Continuar <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            ) : (
+              <Button 
+                onClick={handleNextStep} 
+                className="w-full bg-evolve-purple hover:bg-evolve-purple/80 text-white"
+              >
+                Entendido <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            )}
             
             {!isOnboarded && step === totalSteps && (
-              <Button asChild variant="outline" className="w-full border-evolve-purple text-evolve-purple hover:bg-evolve-purple/10">
-                <Link to="/onboarding">Completar mi perfil</Link>
+              <Button 
+                onClick={handleCompleteProfile} 
+                variant="outline" 
+                className="w-full border-evolve-purple text-evolve-purple hover:bg-evolve-purple/10"
+              >
+                Completar mi perfil
               </Button>
             )}
             
             {isOnboarded && step === totalSteps && (
-              <Button asChild variant="outline" className="w-full border-evolve-purple text-evolve-purple hover:bg-evolve-purple/10">
-                <Link to="/dashboard">Ir al Dashboard</Link>
+              <Button 
+                onClick={handleGoToDashboard} 
+                variant="outline" 
+                className="w-full border-evolve-purple text-evolve-purple hover:bg-evolve-purple/10"
+              >
+                Ir al Dashboard
               </Button>
             )}
           </div>
