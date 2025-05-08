@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/context/UserContext';
@@ -26,6 +27,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Progress } from '@/components/ui/progress';
 import { toast } from '@/components/ui/sonner';
+import { useForm, Controller } from 'react-hook-form';
+import { Loader } from 'lucide-react';
 
 const OnboardingForm = () => {
   const navigate = useNavigate();
@@ -50,6 +53,22 @@ const OnboardingForm = () => {
     publicSpeaking: PublicSpeakingLevel.NEUTRAL,
     friendsCount: FriendsCount.AVERAGE,
     femaleCommunication: CommunicationLevel.AVERAGE
+  });
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { 
+    control, 
+    handleSubmit: validateForm, 
+    formState: { errors }, 
+    trigger 
+  } = useForm({
+    defaultValues: {
+      name: formData.name,
+      age: formData.age,
+      religion: formData.religion,
+      hobbies: formData.hobbies?.join(', ') || ''
+    }
   });
 
   const totalSteps = 7;
@@ -80,7 +99,19 @@ const OnboardingForm = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    if (currentStep === 1) {
+      // Validate fields in step 1
+      const isValid = await trigger(['name', 'age']);
+      if (!isValid) return;
+    }
+    
+    if (currentStep === 3) {
+      // Validate fields in step 3
+      const isValid = await trigger(['religion', 'hobbies']);
+      if (!isValid) return;
+    }
+    
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     }
@@ -92,36 +123,41 @@ const OnboardingForm = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = (data: any) => {
+    setIsSubmitting(true);
     
-    // Asegurarse de que hay al menos un hobby
-    if (!formData.hobbies?.length) {
-      toast.error("Por favor, indica al menos un hobby");
-      return;
-    }
-
-    // Asegurarse de que hay religión
-    if (!formData.religion) {
-      toast.error("Por favor, indica tu religión o creencia espiritual");
-      return;
-    }
-
-    // Si el usuario seleccionó "NONE" en pastTraumas, asegurarse de que sea la única opción
+    // Process the hobbies string into an array
+    const hobbiesArray = data.hobbies.split(',').map((hobby: string) => hobby.trim()).filter(Boolean);
+    
+    // If the user selected "NONE" in pastTraumas, ensure it's the only option
     if (formData.pastTraumas?.includes(PastTrauma.NONE) && formData.pastTraumas.length > 1) {
       setFormData(prev => ({ ...prev, pastTraumas: [PastTrauma.NONE] }));
     }
 
-    // Si el usuario seleccionó "NONE" en badHabits, asegurarse de que sea la única opción
+    // If the user selected "NONE" in badHabits, ensure it's the only option
     if (formData.badHabits?.includes(BadHabit.NONE) && formData.badHabits.length > 1) {
       setFormData(prev => ({ ...prev, badHabits: [BadHabit.NONE] }));
     }
 
-    setUserProfile(formData as UserProfile);
+    // Combine form data
+    const finalFormData = {
+      ...formData,
+      name: data.name,
+      age: data.age,
+      religion: data.religion,
+      hobbies: hobbiesArray
+    };
+
+    setUserProfile(finalFormData as UserProfile);
     completeOnboarding();
     
     toast.success("¡Perfil creado con éxito!");
-    navigate('/dashboard');
+    
+    // Simulate network request
+    setTimeout(() => {
+      setIsSubmitting(false);
+      navigate('/dashboard');
+    }, 800);
   };
 
   // Helper function to generate unique IDs
@@ -162,30 +198,73 @@ const OnboardingForm = () => {
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Nombre</Label>
-                <Input 
-                  id="name" 
-                  name="name" 
-                  value={formData.name} 
-                  onChange={handleInputChange} 
-                  required
-                  className="bg-evolve-dark/60 border-evolve-gray/30 text-white"
+                <Label htmlFor="name" className={errors.name ? "text-destructive" : ""}>
+                  Nombre
+                </Label>
+                <Controller
+                  name="name"
+                  control={control}
+                  rules={{ 
+                    required: "El nombre es obligatorio", 
+                    minLength: { value: 2, message: "Nombre demasiado corto" }
+                  }}
+                  render={({ field }) => (
+                    <Input 
+                      id="name" 
+                      {...field}
+                      value={field.value || ''}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        handleInputChange(e);
+                      }}
+                      className={`bg-evolve-dark/60 border-evolve-gray/30 text-white ${
+                        errors.name ? "border-destructive" : ""
+                      }`}
+                      aria-invalid={errors.name ? "true" : "false"}
+                    />
+                  )}
                 />
+                {errors.name && (
+                  <p className="text-sm text-destructive" role="alert">
+                    {errors.name.message as string}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="age">Edad</Label>
-                <Input 
-                  id="age" 
-                  name="age" 
-                  type="number" 
-                  min={18} 
-                  max={100} 
-                  value={formData.age} 
-                  onChange={handleNumberChange}
-                  required
-                  className="bg-evolve-dark/60 border-evolve-gray/30 text-white"
+                <Label htmlFor="age" className={errors.age ? "text-destructive" : ""}>
+                  Edad
+                </Label>
+                <Controller
+                  name="age"
+                  control={control}
+                  rules={{ 
+                    required: "La edad es obligatoria", 
+                    min: { value: 18, message: "Debes ser mayor de edad" },
+                    max: { value: 100, message: "Edad no válida" }
+                  }}
+                  render={({ field }) => (
+                    <Input 
+                      id="age" 
+                      type="number" 
+                      {...field}
+                      value={field.value || ''}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        handleNumberChange(e);
+                      }}
+                      className={`bg-evolve-dark/60 border-evolve-gray/30 text-white ${
+                        errors.age ? "border-destructive" : ""
+                      }`}
+                      aria-invalid={errors.age ? "true" : "false"}
+                    />
+                  )}
                 />
+                {errors.age && (
+                  <p className="text-sm text-destructive" role="alert">
+                    {errors.age.message as string}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -325,30 +404,76 @@ const OnboardingForm = () => {
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="religion">Religión o Creencias Espirituales</Label>
-                <Input 
-                  id="religion" 
-                  placeholder="Cristiano, Ateo, Agnóstico, etc." 
-                  value={formData.religion} 
-                  onChange={e => setFormData(prev => ({ ...prev, religion: e.target.value }))}
-                  required
-                  className="bg-evolve-dark/60 border-evolve-gray/30 text-white"
+                <Label htmlFor="religion" className={errors.religion ? "text-destructive" : ""}>
+                  Religión o Creencias Espirituales
+                </Label>
+                <Controller
+                  name="religion"
+                  control={control}
+                  rules={{ 
+                    required: "Este campo es obligatorio"
+                  }}
+                  render={({ field }) => (
+                    <Input 
+                      id="religion" 
+                      placeholder="Cristiano, Ateo, Agnóstico, etc." 
+                      {...field}
+                      value={field.value || ''}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        setFormData(prev => ({ ...prev, religion: e.target.value }));
+                      }}
+                      className={`bg-evolve-dark/60 border-evolve-gray/30 text-white ${
+                        errors.religion ? "border-destructive" : ""
+                      }`}
+                      aria-invalid={errors.religion ? "true" : "false"}
+                    />
+                  )}
                 />
+                {errors.religion && (
+                  <p className="text-sm text-destructive" role="alert">
+                    {errors.religion.message as string}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="hobbies">Hobbies (separados por coma)</Label>
-                <Input 
-                  id="hobbies" 
-                  placeholder="Gym, leer, viajar, etc." 
-                  value={formData.hobbies?.join(', ')} 
-                  onChange={(e) => {
-                    const hobbies = e.target.value.split(',').map(hobby => hobby.trim()).filter(Boolean);
-                    setFormData(prev => ({ ...prev, hobbies }));
+                <Label htmlFor="hobbies" className={errors.hobbies ? "text-destructive" : ""}>
+                  Hobbies (separados por coma)
+                </Label>
+                <Controller
+                  name="hobbies"
+                  control={control}
+                  rules={{ 
+                    required: "Debes indicar al menos un hobby",
+                    validate: (value) => {
+                      const hobbies = value.split(',').map(hobby => hobby.trim()).filter(Boolean);
+                      return hobbies.length > 0 || "Debes indicar al menos un hobby";
+                    }
                   }}
-                  required
-                  className="bg-evolve-dark/60 border-evolve-gray/30 text-white"
+                  render={({ field }) => (
+                    <Input 
+                      id="hobbies" 
+                      placeholder="Gym, leer, viajar, etc." 
+                      {...field}
+                      value={field.value || ''}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        const hobbies = e.target.value.split(',').map(hobby => hobby.trim()).filter(Boolean);
+                        setFormData(prev => ({ ...prev, hobbies }));
+                      }}
+                      className={`bg-evolve-dark/60 border-evolve-gray/30 text-white ${
+                        errors.hobbies ? "border-destructive" : ""
+                      }`}
+                      aria-invalid={errors.hobbies ? "true" : "false"}
+                    />
+                  )}
                 />
+                {errors.hobbies && (
+                  <p className="text-sm text-destructive" role="alert">
+                    {errors.hobbies.message as string}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -663,7 +788,7 @@ const OnboardingForm = () => {
 
   return (
     <Card className="max-w-2xl mx-auto p-6 bg-evolve-dark/75 border-evolve-purple/30 text-white">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={validateForm(onSubmit)}>
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm">Paso {currentStep} de {totalSteps}</span>
@@ -679,7 +804,7 @@ const OnboardingForm = () => {
             type="button" 
             variant="outline" 
             onClick={handleBack} 
-            disabled={currentStep === 1}
+            disabled={currentStep === 1 || isSubmitting}
             className="border-evolve-purple/50 text-white hover:bg-evolve-purple/20"
           >
             Anterior
@@ -689,6 +814,7 @@ const OnboardingForm = () => {
             <Button 
               type="button" 
               onClick={handleNext}
+              disabled={isSubmitting}
               className="bg-evolve-purple hover:bg-evolve-purple/80"
             >
               Siguiente
@@ -696,9 +822,16 @@ const OnboardingForm = () => {
           ) : (
             <Button 
               type="submit"
+              disabled={isSubmitting}
+              aria-busy={isSubmitting}
               className="bg-evolve-purple hover:bg-evolve-purple/80"
             >
-              Completar
+              {isSubmitting ? (
+                <>
+                  <Loader className="mr-2 h-4 w-4 animate-spin" />
+                  Procesando...
+                </>
+              ) : "Completar"}
             </Button>
           )}
         </div>
