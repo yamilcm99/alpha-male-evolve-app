@@ -91,4 +91,23 @@
   .btn-secondary {
     @apply bg-transparent border border-[rgb(var(--color-primary))] text-white hover:bg-[rgb(var(--color-primary)/0.2)] transition-colors;
   }
+  
+  /* Add improved focus styles for form elements */
+  .form-element:focus-visible {
+    @apply ring-2 ring-[rgb(var(--color-primary))] ring-offset-1;
+  }
+  
+  /* Improved visual feedback for form validation */
+  .input-valid {
+    @apply border-green-500 focus:border-green-500 focus:ring-green-500/30;
+  }
+  
+  .input-invalid {
+    @apply border-destructive focus:border-destructive focus:ring-destructive/30;
+  }
+  
+  /* Improved radio and checkbox styles for better visibility */
+  .radio-custom, .checkbox-custom {
+    @apply text-[rgb(var(--color-primary))] focus:ring-[rgb(var(--color-primary)/30)];
+  }
 }
