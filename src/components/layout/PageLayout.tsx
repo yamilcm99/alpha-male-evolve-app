@@ -7,6 +7,7 @@ import Breadcrumbs from './Breadcrumbs';
 import AppSidebar from './Sidebar';
 import { SidebarProvider, SidebarTrigger, SidebarRail, SidebarInset } from '@/components/ui/sidebar';
 import NotificationsPopover from '@/components/notifications/NotificationsPopover';
+import { toast } from '@/components/ui/sonner';
 
 type PageLayoutProps = {
   children: ReactNode;
@@ -36,8 +37,20 @@ const PageLayout = ({ children, requiresOnboarding = true }: PageLayoutProps) =>
           // Si la hora y minuto coinciden aproximadamente (dentro de un rango de 5 minutos)
           if (reminderHour === currentHour && 
               Math.abs(reminderMinute - currentMinute) <= 5) {
-            // Aquí se podría mostrar una notificación
-            console.log(`¡Recordatorio: ${reminder.title}!`);
+            // Mostrar notificación con toast
+            toast.info(
+              `Recordatorio: ${reminder.title}`,
+              {
+                description: reminder.message || 'Es hora de tu actividad programada.',
+                duration: 8000,
+                action: {
+                  label: 'Ver detalles',
+                  onClick: () => {
+                    window.location.href = '/reminders';
+                  },
+                },
+              }
+            );
           }
         }
       });
@@ -45,6 +58,9 @@ const PageLayout = ({ children, requiresOnboarding = true }: PageLayoutProps) =>
     
     // Verificar recordatorios cada minuto
     const intervalId = setInterval(checkReminders, 60000);
+    
+    // Ejecutar una verificación inicial
+    checkReminders();
     
     return () => clearInterval(intervalId);
   }, []);

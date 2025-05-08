@@ -16,6 +16,8 @@ import AchievementsPage from "./pages/AchievementsPage";
 import GoalsPage from "./pages/GoalsPage";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
+import CommunityPage from "./pages/CommunityPage";
+import ReminderPage from "./pages/ReminderPage";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +39,8 @@ const App = () => (
             <Route path="/goals" element={<GoalsPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/community" element={<CommunityPage />} />
+            <Route path="/reminders" element={<ReminderPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </BrowserRouter>

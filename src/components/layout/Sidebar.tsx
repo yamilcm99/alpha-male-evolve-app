@@ -25,7 +25,9 @@ import {
   CalendarDays,
   Settings,
   Bot,
-  Home
+  Home,
+  Clock,
+  Users
 } from 'lucide-react';
 import { calculateUserLevel } from '@/utils/userLevelCalculator';
 
@@ -43,6 +45,8 @@ export const AppSidebar = () => {
     { title: 'Metas', path: '/goals', icon: Target },
     { title: 'Plan', path: '/plan', icon: List },
     { title: 'Coach IA', path: '/ai-coach', icon: Bot },
+    { title: 'Comunidad', path: '/community', icon: Users },
+    { title: 'Recordatorios', path: '/reminders', icon: Clock },
     { title: 'Perfil', path: '/profile', icon: User },
     { title: 'Configuración', path: '/settings', icon: Settings },
   ];
