@@ -63,7 +63,7 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Colores personalizados para la app
+				// Define direct color values rather than using CSS variables for the evolve colors
 				evolve: {
 					dark: '#1A1F2C',
 					gray: '#403E43',

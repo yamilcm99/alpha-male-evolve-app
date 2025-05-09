@@ -176,9 +176,9 @@ body {
 
 /* Neon effects */
 .neon-border {
-  box-shadow: 0 0 5px theme('colors.evolve-purple'), 0 0 10px theme('colors.evolve-purple');
+  box-shadow: 0 0 5px #8B5CF6, 0 0 10px #8B5CF6;
 }
 
 .neon-text {
-  text-shadow: 0 0 5px theme('colors.evolve-purple'), 0 0 10px theme('colors.evolve-purple');
+  text-shadow: 0 0 5px #8B5CF6, 0 0 10px #8B5CF6;
 }
