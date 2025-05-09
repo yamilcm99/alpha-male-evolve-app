@@ -73,10 +73,19 @@ export default {
 					green: '#4CAF50'
 				},
 			},
+			fontFamily: {
+				display: ['Montserrat', 'sans-serif'],
+				body: ['Inter', 'system-ui', 'sans-serif'],
+			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			boxShadow: {
+				'neon-purple': '0 0 5px rgba(139, 92, 246, 0.5), 0 0 20px rgba(139, 92, 246, 0.3)',
+				'neon-blue': '0 0 5px rgba(79, 70, 229, 0.5), 0 0 20px rgba(79, 70, 229, 0.3)',
+				'glass': '0 0 15px rgba(0, 0, 0, 0.2)'
 			},
 			keyframes: {
 				'accordion-down': {
@@ -98,13 +107,30 @@ export default {
 				'pulse-soft': {
 					'0%, 100%': { opacity: '1' },
 					'50%': { opacity: '0.7' }
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' }
+				},
+				'glow': {
+					'0%, 100%': { boxShadow: '0 0 5px rgba(139, 92, 246, 0.5), 0 0 20px rgba(139, 92, 246, 0.3)' },
+					'50%': { boxShadow: '0 0 15px rgba(139, 92, 246, 0.8), 0 0 30px rgba(139, 92, 246, 0.6)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'pulse-soft': 'pulse-soft 2s ease-in-out infinite'
-			}
+				'pulse-soft': 'pulse-soft 2s ease-in-out infinite',
+				'float': 'float 6s ease-in-out infinite',
+				'glow': 'glow 3s ease-in-out infinite'
+			},
+			backgroundSize: {
+				'size-200': '200% 200%',
+			},
+			backgroundPosition: {
+				'pos-0': '0% 0%',
+				'pos-100': '100% 100%',
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
