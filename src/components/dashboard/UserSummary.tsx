@@ -1,11 +1,10 @@
 
 import React from 'react';
 import { useUser } from '@/context/UserContext';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { calculateUserLevel } from '@/utils/userLevelCalculator';
-import { Bot, ChevronRight } from 'lucide-react';
+import { Wrench, Tools, ArrowUp } from 'lucide-react';
 
 const UserSummary = () => {
   const { userProfile } = useUser();
@@ -17,79 +16,45 @@ const UserSummary = () => {
   const { level, score } = calculateUserLevel(userProfile);
   
   return (
-    <Card className="bg-evolve-dark/75 border-evolve-purple/30 text-white">
-      <CardContent className="pt-6">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-evolve-purple/20 rounded-full flex items-center justify-center border-2 border-evolve-purple">
-            <span className="text-2xl font-bold">{level}</span>
-          </div>
-          <div>
-            <h3 className="text-xl font-medium">
-              {userProfile.name}
-            </h3>
-            <p className="text-sm text-gray-300">
-              Alpha Level {level} | {score}/100 puntos
-            </p>
+    <Card className="bg-evolve-dark/75 border-evolve-purple/30 text-white overflow-hidden relative">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-evolve-purple/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+      <div className="absolute bottom-0 left-0 w-24 h-24 bg-evolve-purple/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+      
+      <CardContent className="pt-6 pb-6 flex items-center space-x-4">
+        <div className="relative">
+          <Avatar className="w-16 h-16 border-2 border-evolve-purple">
+            <AvatarImage src={userProfile.avatar || undefined} alt={userProfile.displayName || "Usuario"} />
+            <AvatarFallback className="bg-evolve-purple/20 text-white text-lg">
+              {userProfile.displayName ? userProfile.displayName.charAt(0).toUpperCase() : "U"}
+            </AvatarFallback>
+          </Avatar>
+          <div className="absolute -bottom-1 -right-1 bg-evolve-purple text-white rounded-full w-6 h-6 flex items-center justify-center border border-evolve-dark">
+            <Tools size={14} />
           </div>
         </div>
         
-        <div className="mt-6 grid grid-cols-2 gap-2">
-          <div className="bg-evolve-dark/40 p-3 rounded-lg">
-            <p className="text-xs text-gray-400">Edad</p>
-            <p>{userProfile.age} años</p>
-          </div>
+        <div className="flex-1">
+          <h2 className="font-bold text-xl flex items-center">
+            {userProfile.displayName || "Usuario"}
+            <div className="ml-2 bg-evolve-purple/20 text-evolve-purple text-xs px-2 py-0.5 rounded-full flex items-center">
+              <Wrench className="w-3 h-3 mr-1" />
+              <span>Nivel {level}</span>
+            </div>
+          </h2>
           
-          <div className="bg-evolve-dark/40 p-3 rounded-lg">
-            <p className="text-xs text-gray-400">Estado físico</p>
-            <p>{getPhysicalConditionText(userProfile.physicalCondition)}</p>
+          <div className="text-sm text-gray-300 flex items-center mt-1">
+            <span>Alpha Score: {score}/100</span>
+            <div className="ml-2 text-xs text-green-400 flex items-center">
+              <ArrowUp className="w-3 h-3" />
+              <span>+5pts</span>
+            </div>
           </div>
         </div>
       </CardContent>
       
-      <CardFooter className="flex flex-col pt-2 gap-2">
-        <Button
-          variant="outline"
-          className="w-full border-evolve-purple/50 hover:bg-evolve-purple/20 justify-between"
-          asChild
-        >
-          <Link to="/plan">
-            <span>Ver plan personalizado</span>
-            <ChevronRight size={16} />
-          </Link>
-        </Button>
-        
-        <Button
-          variant="outline"
-          className="w-full border-evolve-purple/50 hover:bg-evolve-purple/20 justify-between"
-          asChild
-        >
-          <Link to="/ai-coach">
-            <div className="flex items-center">
-              <Bot size={16} className="mr-2 text-evolve-purple" /> 
-              <span>Consultar con mi coach IA</span>
-            </div>
-            <ChevronRight size={16} />
-          </Link>
-        </Button>
-      </CardFooter>
+      <div className="h-1 bg-gradient-to-r from-evolve-purple via-evolve-blue to-evolve-purple w-full"></div>
     </Card>
   );
-};
-
-// Helper function to get user-friendly text for physical condition
-const getPhysicalConditionText = (condition: string): string => {
-  switch (condition) {
-    case 'poor':
-      return 'Bajo';
-    case 'average':
-      return 'Promedio';
-    case 'good':
-      return 'Bueno';
-    case 'excellent':
-      return 'Excelente';
-    default:
-      return 'No especificado';
-  }
 };
 
 export default UserSummary;
