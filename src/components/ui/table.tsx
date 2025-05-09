@@ -1,15 +1,21 @@
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
 const Table = React.forwardRef<
   HTMLTableElement,
-  React.HTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
+  React.HTMLAttributes<HTMLTableElement> & { compact?: boolean, zebra?: boolean }
+>(({ className, compact = false, zebra = false, ...props }, ref) => (
   <div className="relative w-full overflow-auto">
     <table
       ref={ref}
-      className={cn("w-full caption-bottom text-sm", className)}
+      className={cn(
+        "w-full caption-bottom text-sm", 
+        compact && "table-compact",
+        zebra && "table-zebra",
+        className
+      )}
       {...props}
     />
   </div>
@@ -73,7 +79,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
+      "h-12 px-4 text-left align-middle font-medium table-header-cell [&:has([role=checkbox])]:pr-0",
       className
     )}
     {...props}

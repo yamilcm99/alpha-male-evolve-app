@@ -79,12 +79,12 @@ const DashboardPage = () => {
   return (
     <PageLayout>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-gray-300">Vista general de tu progreso y recomendaciones</p>
+        <h1 className="text-3xl font-bold font-display mb-1">Dashboard</h1>
+        <p className="text-gray-300">Vista general de tu progreso y evolución personal</p>
       </div>
       
       {/* Filtros persistentes en la parte superior */}
-      <Card className="bg-evolve-dark/75 border-evolve-purple/30 text-white mb-6 sticky top-0 z-10">
+      <Card hover={false} className="mb-6 sticky top-0 z-10">
         <CardContent className="py-4 flex flex-wrap gap-2 items-center justify-between">
           <div className="flex items-center gap-2">
             <Filter className="h-4 w-4 text-evolve-purple" />
@@ -131,12 +131,14 @@ const DashboardPage = () => {
       </div>
       
       {/* Sección 2: Nivel Alpha - Siempre visible como KPI principal */}
-      <AlphaLevels />
+      <div className="mb-8">
+        <AlphaLevels />
+      </div>
       
       {/* Sección 3: Hábitos - Expandible */}
-      <div className="mt-8">
+      <div className="mb-8">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Seguimiento de Hábitos</h2>
+          <h2 className="text-xl font-bold font-display">Seguimiento de Hábitos</h2>
           <Button 
             variant="ghost" 
             size="sm"
@@ -165,21 +167,17 @@ const DashboardPage = () => {
         {/* Contenido expandible de hábitos */}
         <div 
           id="habits-section"
-          className={`grid grid-cols-1 md:grid-cols-12 gap-6 mt-6 ${expandedSections.habits ? '' : 'hidden'}`}
+          className={`card-grid mt-6 ${expandedSections.habits ? '' : 'hidden'}`}
         >
-          <div className="md:col-span-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <HabitProgressChart />
-              <HabitCalendarView />
-            </div>
-          </div>
+          <HabitProgressChart />
+          <HabitCalendarView />
         </div>
       </div>
       
       {/* Sección 4: Logros y Recomendaciones - Expandible */}
-      <div className="mt-8">
+      <div className="mb-8">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Progreso y Recomendaciones</h2>
+          <h2 className="text-xl font-bold font-display">Progreso y Recomendaciones</h2>
           <Button 
             variant="ghost" 
             size="sm"

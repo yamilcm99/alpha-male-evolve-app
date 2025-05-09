@@ -6,6 +6,7 @@ import { addDays, format, startOfWeek, startOfMonth, eachDayOfInterval, isSameDa
 import { es } from 'date-fns/locale';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { HabitCategory } from '@/types/user';
+import { Calendar } from 'lucide-react';
 
 const HabitCalendarView = () => {
   const { habits } = useHabits();
@@ -51,9 +52,12 @@ const HabitCalendarView = () => {
   };
   
   return (
-    <Card className="bg-evolve-dark/75 border-evolve-purple/30 text-white">
+    <Card hover={true} className="h-full">
       <CardHeader>
-        <CardTitle>Calendario de hábitos</CardTitle>
+        <div className="flex items-center space-x-2">
+          <Calendar className="h-5 w-5 text-evolve-purple" />
+          <CardTitle>Calendario de hábitos</CardTitle>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="text-sm mb-4 text-gray-300">
@@ -80,7 +84,7 @@ const HabitCalendarView = () => {
             return (
               <div 
                 key={i} 
-                className={`aspect-square rounded-md flex flex-col items-center justify-center relative overflow-hidden
+                className={`aspect-square rounded-md flex flex-col items-center justify-center relative overflow-hidden transition-all hover:bg-evolve-dark/40
                   ${isToday ? 'border border-evolve-purple' : 'border border-gray-800'}`}
               >
                 <div className="text-xs mb-1">

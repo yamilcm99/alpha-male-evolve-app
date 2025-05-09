@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -63,7 +62,7 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Define direct color values rather than using CSS variables for the evolve colors
+				// Define direct color values for the evolve colors
 				evolve: {
 					dark: '#1A1F2C',
 					gray: '#403E43',
@@ -115,6 +114,10 @@ export default {
 				'glow': {
 					'0%, 100%': { boxShadow: '0 0 5px rgba(139, 92, 246, 0.5), 0 0 20px rgba(139, 92, 246, 0.3)' },
 					'50%': { boxShadow: '0 0 15px rgba(139, 92, 246, 0.8), 0 0 30px rgba(139, 92, 246, 0.6)' }
+				},
+				'card-hover': {
+					'0%': { transform: 'translateY(0)' },
+					'100%': { transform: 'translateY(-5px)' },
 				}
 			},
 			animation: {
@@ -122,7 +125,8 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'pulse-soft': 'pulse-soft 2s ease-in-out infinite',
 				'float': 'float 6s ease-in-out infinite',
-				'glow': 'glow 3s ease-in-out infinite'
+				'glow': 'glow 3s ease-in-out infinite',
+				'card-hover': 'card-hover 0.3s ease forwards',
 			},
 			backgroundSize: {
 				'size-200': '200% 200%',

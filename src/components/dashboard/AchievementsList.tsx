@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { useAchievements } from '@/context/AchievementsContext';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardMetric } from '@/components/ui/card';
 import { AchievementCategory } from '@/types/user';
 import { Badge } from '@/components/ui/badge';
 import { Award, Lock } from 'lucide-react';
@@ -52,7 +53,7 @@ const AchievementsList = () => {
 
   if (!achievements || !achievements.length) {
     return (
-      <Card className="bg-evolve-dark/75 border-evolve-purple/30 text-white">
+      <Card hover={true} className="h-full">
         <CardHeader>
           <CardTitle>Logros</CardTitle>
         </CardHeader>
@@ -71,14 +72,14 @@ const AchievementsList = () => {
   ).slice(0, 3);
 
   return (
-    <Card className="bg-evolve-dark/75 border-evolve-purple/30 text-white">
+    <Card hover={true}>
       <CardHeader>
-        <CardTitle className="flex justify-between items-center">
-          <span>Logros Recientes</span>
+        <div className="flex justify-between items-center">
+          <CardTitle>Logros Recientes</CardTitle>
           <Badge variant="outline" className="border-evolve-purple">
             {unlockedAchievements.length} / {achievements.length}
           </Badge>
-        </CardTitle>
+        </div>
       </CardHeader>
       <CardContent>
         {recentAchievements.length > 0 ? (
@@ -86,7 +87,7 @@ const AchievementsList = () => {
             {recentAchievements.map(achievement => (
               <div 
                 key={achievement.id}
-                className="flex items-center p-3 rounded-lg bg-evolve-dark/40 border border-evolve-gray/20"
+                className="flex items-center p-3 rounded-lg bg-evolve-dark/40 border border-evolve-gray/20 transition-all hover:bg-evolve-dark/60"
               >
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${getCategoryColor(achievement.category)}`}>
                   <Award size={20} className="text-white" />
@@ -107,7 +108,7 @@ const AchievementsList = () => {
             
             <a 
               href="/achievements"
-              className="block text-center text-evolve-purple hover:underline mt-4"
+              className="block text-center text-evolve-purple hover:underline mt-4 py-2 transition-all hover:text-evolve-blue"
             >
               Ver todos los logros
             </a>
@@ -117,8 +118,8 @@ const AchievementsList = () => {
             <div className="w-12 h-12 rounded-full bg-evolve-gray/20 flex items-center justify-center mb-3">
               <Lock size={24} className="text-evolve-gray" />
             </div>
-            <p className="mb-1">Aún no has desbloqueado logros</p>
-            <p className="text-sm text-gray-400">Completa tus hábitos diarios para desbloquear logros</p>
+            <CardMetric>0 Logros</CardMetric>
+            <p className="card-context">Completa tus hábitos diarios para desbloquear logros</p>
           </div>
         )}
       </CardContent>

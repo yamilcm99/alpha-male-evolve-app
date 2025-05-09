@@ -1,11 +1,12 @@
 
 import React from 'react';
 import { useHabits } from '@/context/HabitsContext';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardMetric } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { HabitCategory } from '@/types/user';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { BarChart2 } from 'lucide-react';
 
 const HabitProgressChart = () => {
   const { habits } = useHabits();
@@ -16,14 +17,16 @@ const HabitProgressChart = () => {
   
   if (!habitsWithProgress.length) {
     return (
-      <Card className="bg-evolve-dark/75 border-evolve-purple/30 text-white h-full">
+      <Card hover={true} className="h-full">
         <CardHeader>
-          <CardTitle className="text-lg sm:text-xl">Progreso de hábitos</CardTitle>
-        </CardHeader>
-        <CardContent className="flex items-center justify-center p-6">
-          <div className="text-center text-gray-400">
-            <p>Completa tus hábitos para ver el progreso aquí</p>
+          <div className="flex items-center space-x-2">
+            <BarChart2 className="h-5 w-5 text-evolve-purple" />
+            <CardTitle>Progreso de hábitos</CardTitle>
           </div>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center justify-center p-6 text-center h-[300px]">
+          <CardMetric>0 Hábitos</CardMetric>
+          <p className="card-context">Completa tus hábitos para ver el progreso aquí</p>
         </CardContent>
       </Card>
     );
@@ -51,9 +54,12 @@ const HabitProgressChart = () => {
   };
   
   return (
-    <Card className="bg-evolve-dark/75 border-evolve-purple/30 text-white h-full">
+    <Card hover={true} className="h-full">
       <CardHeader>
-        <CardTitle className="text-lg sm:text-xl">Progreso de hábitos</CardTitle>
+        <div className="flex items-center space-x-2">
+          <BarChart2 className="h-5 w-5 text-evolve-purple" />
+          <CardTitle>Progreso de hábitos</CardTitle>
+        </div>
       </CardHeader>
       <CardContent>
         <ChartContainer className="h-[300px] mt-4" config={chartConfig}>
@@ -95,6 +101,10 @@ const HabitProgressChart = () => {
             />
           </BarChart>
         </ChartContainer>
+        
+        <p className="text-sm text-center text-gray-400 mt-4">
+          Visualización del progreso de tus hábitos activos
+        </p>
       </CardContent>
     </Card>
   );
