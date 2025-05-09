@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -12,9 +11,7 @@ const Index = () => {
   const navigate = useNavigate();
   const { isOnboarded } = useUser();
   
-  // Show welcome modal when the page loads
   useEffect(() => {
-    // Show the modal after a short delay for better UX
     const timer = setTimeout(() => {
       setShowWelcomeModal(true);
     }, 500);
@@ -30,7 +27,6 @@ const Index = () => {
     }
   };
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -59,18 +55,8 @@ const Index = () => {
       {/* Animated background pattern */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <div className="absolute w-full h-full opacity-10">
-          <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="grid-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="var(--evolve-purple)" />
-                <stop offset="100%" stopColor="var(--evolve-blue)" />
-              </linearGradient>
-            </defs>
-            <pattern id="grid" width="8" height="8" patternUnits="userSpaceOnUse">
-              <path d="M 8 0 L 0 0 0 8" fill="none" stroke="url(#grid-gradient)" strokeWidth="0.5" />
-            </pattern>
-            <rect width="100" height="100" fill="url(#grid)" />
-          </svg>
+          <div className="w-full h-full bg-[radial-gradient(circle_at_50%_120%,rgba(139,92,246,0.1),rgba(30,174,219,0.05))]" />
+          <div className="absolute inset-0 bg-grid" />
         </div>
       </div>
 
@@ -83,7 +69,7 @@ const Index = () => {
         >
           <motion.h1 
             variants={itemVariants}
-            className="text-5xl md:text-7xl font-bold mb-8 tracking-tighter"
+            className="text-5xl md:text-7xl font-bold mb-8 tracking-tighter font-display"
           >
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-evolve-purple to-evolve-blue">Alpha</span>
             <span className="relative">
@@ -190,13 +176,11 @@ const Index = () => {
         </motion.div>
       </div>
       
-      {/* Welcome Modal */}
       {showWelcomeModal && <WelcomeModal />}
     </div>
   );
 };
 
-// Feature card component
 const FeatureCard = ({ icon, title, description }) => {
   return (
     <motion.div 
@@ -212,7 +196,6 @@ const FeatureCard = ({ icon, title, description }) => {
   );
 };
 
-// Step card component
 const StepCard = ({ number, title, description }) => {
   return (
     <motion.div 
@@ -229,9 +212,6 @@ const StepCard = ({ number, title, description }) => {
   );
 };
 
-export default Index;
-
-// Añadir este componente Dumbbell ya que no está en nuestras importaciones básicas
 function Dumbbell(props) {
   return (
     <svg
@@ -276,3 +256,5 @@ function Briefcase(props) {
     </svg>
   );
 }
+
+export default Index;
