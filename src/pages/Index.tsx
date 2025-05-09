@@ -115,8 +115,8 @@ const Index = () => {
         </div>
       </div>
       
-      {/* Welcome Modal */}
-      <WelcomeModal open={showWelcomeModal} onOpenChange={setShowWelcomeModal} />
+      {/* Welcome Modal - Fix the props issue */}
+      {showWelcomeModal && <WelcomeModal />}
     </div>
   );
 };
