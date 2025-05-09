@@ -3,17 +3,17 @@ import React from 'react';
 import { useUser } from '@/context/UserContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Gauge, Tools, Hammer, Wrench, ArrowUpRight } from 'lucide-react';
+import { Gauge, Hammer, Wrench, ArrowUpRight } from 'lucide-react';
 import { calculateUserLevel } from '@/utils/userLevelCalculator';
 
 const AlphaLevels = () => {
   const { userProfile } = useUser();
   
   const levels = [
-    { name: "Principiante", description: "Comienzo del camino de evolución", minScore: 0, maxScore: 20, color: "bg-red-500", icon: <Tools size={16} /> },
+    { name: "Principiante", description: "Comienzo del camino de evolución", minScore: 0, maxScore: 20, color: "bg-red-500", icon: <Wrench size={16} /> },
     { name: "Aprendiz", description: "Aprendiendo los fundamentos", minScore: 21, maxScore: 40, color: "bg-orange-500", icon: <Wrench size={16} /> },
     { name: "Dedicado", description: "Compromiso con el desarrollo personal", minScore: 41, maxScore: 60, color: "bg-yellow-500", icon: <Hammer size={16} /> },
-    { name: "Experto", description: "Dominio de las habilidades clave", minScore: 61, maxScore: 80, color: "bg-green-500", icon: <Tools size={16} className="rotate-45" /> },
+    { name: "Experto", description: "Dominio de las habilidades clave", minScore: 61, maxScore: 80, color: "bg-green-500", icon: <Wrench size={16} className="rotate-45" /> },
     { name: "Maestro", description: "Nivel alpha completo", minScore: 81, maxScore: 100, color: "bg-evolve-purple", icon: <ArrowUpRight size={16} /> }
   ];
 

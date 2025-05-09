@@ -19,6 +19,7 @@ export type UserProfile = {
   friendsCount: FriendsCount;
   femaleCommunication: CommunicationLevel;
   updatedAt?: Date | string; // Added for 90-day profile updates
+  avatar?: string; // URL to user's avatar image
 };
 
 export enum FamilyStatus {

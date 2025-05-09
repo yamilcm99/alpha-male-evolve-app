@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Hammer, Tools, Wrench } from 'lucide-react';
+import { ArrowRight, Hammer, Wrench } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '@/context/UserContext';
 
@@ -100,7 +100,7 @@ const WelcomeModal = ({ open, onOpenChange }: WelcomeModalProps) => {
             <DialogHeader>
               <DialogTitle className="text-2xl md:text-3xl text-center text-white flex flex-col items-center">
                 <div className="w-16 h-16 bg-evolve-purple/20 rounded-full flex items-center justify-center mb-4">
-                  <Tools className="w-8 h-8 text-evolve-purple" />
+                  <Wrench className="w-8 h-8 text-evolve-purple" />
                 </div>
                 <span className="text-evolve-purple">¡Comienza ya</span> tu transformación!
               </DialogTitle>
@@ -171,7 +171,7 @@ const WelcomeModal = ({ open, onOpenChange }: WelcomeModalProps) => {
                   variant="outline" 
                   className="w-full border-evolve-purple text-evolve-purple hover:bg-evolve-purple/10 group transition-all"
                 >
-                  <Tools className="mr-2 h-4 w-4" />
+                  <Wrench className="mr-2 h-4 w-4" />
                   Ir al Dashboard
                 </Button>
               )}

@@ -4,7 +4,7 @@ import { useUser } from '@/context/UserContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { calculateUserLevel } from '@/utils/userLevelCalculator';
-import { Wrench, Tools, ArrowUp } from 'lucide-react';
+import { Wrench, ArrowUp } from 'lucide-react';
 
 const UserSummary = () => {
   const { userProfile } = useUser();
@@ -23,19 +23,19 @@ const UserSummary = () => {
       <CardContent className="pt-6 pb-6 flex items-center space-x-4">
         <div className="relative">
           <Avatar className="w-16 h-16 border-2 border-evolve-purple">
-            <AvatarImage src={userProfile.avatar || undefined} alt={userProfile.displayName || "Usuario"} />
+            <AvatarImage src={userProfile.avatar || undefined} alt={userProfile.name} />
             <AvatarFallback className="bg-evolve-purple/20 text-white text-lg">
-              {userProfile.displayName ? userProfile.displayName.charAt(0).toUpperCase() : "U"}
+              {userProfile.name ? userProfile.name.charAt(0).toUpperCase() : "U"}
             </AvatarFallback>
           </Avatar>
           <div className="absolute -bottom-1 -right-1 bg-evolve-purple text-white rounded-full w-6 h-6 flex items-center justify-center border border-evolve-dark">
-            <Tools size={14} />
+            <Wrench size={14} />
           </div>
         </div>
         
         <div className="flex-1">
           <h2 className="font-bold text-xl flex items-center">
-            {userProfile.displayName || "Usuario"}
+            {userProfile.name || "Usuario"}
             <div className="ml-2 bg-evolve-purple/20 text-evolve-purple text-xs px-2 py-0.5 rounded-full flex items-center">
               <Wrench className="w-3 h-3 mr-1" />
               <span>Nivel {level}</span>
