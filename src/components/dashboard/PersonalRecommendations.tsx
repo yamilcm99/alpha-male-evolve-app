@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '@/context/UserContext';
 import { useHabits } from '@/context/HabitsContext';
@@ -17,6 +17,7 @@ import {
 import { BookOpen, Dumbbell, Briefcase, HeartHandshake, Users, DollarSign, Ban, Calendar } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from '@/components/ui/sonner';
+import { calculateUserLevel } from '@/utils/userLevelCalculator';
 
 const PersonalRecommendations = () => {
   const { userProfile } = useUser();
@@ -26,33 +27,294 @@ const PersonalRecommendations = () => {
     return null;
   }
 
-  // Función para generar recomendaciones basadas en el perfil del usuario
+  // Get user level to personalize recommendations
+  const { level, score } = calculateUserLevel(userProfile);
+
+  // Función para generar recomendaciones basadas en el perfil del usuario y su nivel
   const getRecommendations = () => {
     const recommendations = [];
+    const userLevel = level; // Nivel actual del usuario
 
+    // Añadir recomendaciones específicas basadas en el nivel del usuario
+    switch(userLevel) {
+      case 'Principiante':
+        // Para principiantes, enfoque en establecer hábitos básicos y superar malos hábitos
+        
+        // Recomendación física básica para principiantes
+        recommendations.push({
+          title: "Fundamentos físicos - Los primeros 21 días",
+          description: "Comienza con caminatas diarias de 15 minutos. Un estudio de la Universidad de Harvard muestra que 21 días de actividad ligera aumenta la resistencia cardiovascular en un 12% y mejora el estado de ánimo en un 27%.",
+          icon: <Dumbbell className="text-blue-400" />,
+          habitSuggestion: {
+            name: "Caminata diaria de 15 minutos",
+            description: "Camina al menos 15 minutos cada día para establecer una rutina de actividad física",
+            category: HabitCategory.FITNESS,
+            streak: 0,
+            lastCompleted: null,
+            goal: 21
+          }
+        });
+        
+        // Recomendación de control de tiempo para principiantes
+        recommendations.push({
+          title: "Control de tiempo - Comenzando el cambio",
+          description: "Planifica tus actividades del día siguiente antes de dormir. La neurociencia del hábito muestra que 21 días de planificación nocturna crean un patrón neuronal que reduce la ansiedad matutina en un 38%.",
+          icon: <Calendar className="text-green-500" />,
+          habitSuggestion: {
+            name: "Planificación nocturna",
+            description: "Dedica 5 minutos antes de dormir para planificar tu día siguiente",
+            category: HabitCategory.CAREER,
+            streak: 0,
+            lastCompleted: null,
+            goal: 21
+          }
+        });
+        
+        // Si tiene adicciones, agregar una recomendación específica para principiantes
+        if (userProfile.badHabits?.some(habit => habit !== BadHabit.NONE)) {
+          recommendations.push({
+            title: "Conciencia de hábitos - El primer paso",
+            description: "Registra cada vez que sientes el impulso de ceder a un mal hábito. La psicología conductual demuestra que 21 días de registro consciente aumenta el autocontrol en un 42% al crear conciencia de los desencadenantes.",
+            icon: <Ban className="text-red-500" />,
+            habitSuggestion: {
+              name: "Registro de impulsos",
+              description: "Anota cada vez que sientes un impulso hacia un mal hábito y qué lo desencadenó",
+              category: HabitCategory.ABSTINENCE,
+              streak: 0,
+              lastCompleted: null,
+              goal: 21
+            }
+          });
+        }
+        break;
+        
+      case 'Aprendiz':
+        // Para aprendices, enfoque en desarrollar disciplina y consistencia
+        
+        // Recomendación física intermedia para aprendices
+        recommendations.push({
+          title: "Resistencia física - 21 días de progreso",
+          description: "Realiza 20 minutos de ejercicio cardiovascular 3 veces por semana. Estudios de fisiología deportiva muestran que 21 días de entrenamiento intermitente mejoran la capacidad pulmonar en un 18% y reducen el riesgo cardiovascular en un 14%.",
+          icon: <Dumbbell className="text-blue-400" />,
+          habitSuggestion: {
+            name: "Cardio tres veces por semana",
+            description: "Realiza 20 minutos de ejercicio cardiovascular (correr, nadar, bicicleta) tres veces por semana",
+            category: HabitCategory.FITNESS,
+            streak: 0,
+            lastCompleted: null,
+            goal: 21
+          }
+        });
+        
+        // Recomendación de lectura para aprendices
+        recommendations.push({
+          title: "Conocimiento diario - 21 días de crecimiento",
+          description: "Lee 15 páginas diarias sobre desarrollo personal o profesional. La neuroplasticidad muestra que 21 días de lectura enfocada fortalece las conexiones neuronales relacionadas con el tema en un 24%, mejorando la retención y comprensión.",
+          icon: <BookOpen className="text-yellow-500" />,
+          habitSuggestion: {
+            name: "Lectura diaria enfocada",
+            description: "Lee 15 páginas diarias de un libro que te ayude a crecer personal o profesionalmente",
+            category: HabitCategory.READING,
+            streak: 0,
+            lastCompleted: null,
+            goal: 21
+          }
+        });
+        
+        // Si tiene problemas de comunicación, agregar una recomendación específica
+        if (userProfile.communicationSkills === CommunicationSkills.BEGINNER || 
+            userProfile.communicationSkills === CommunicationSkills.INTERMEDIATE) {
+          recommendations.push({
+            title: "Comunicación básica - 21 días para mejorar",
+            description: "Practica el contacto visual y la escucha activa en cada conversación. Los estudios de comunicación interpersonal demuestran que 21 días de práctica consciente mejoran la percepción de empatía en un 31% y la calidad de las interacciones en un 26%.",
+            icon: <Users className="text-indigo-500" />,
+            habitSuggestion: {
+              name: "Práctica de escucha activa",
+              description: "En cada conversación, practica el contacto visual y resume lo que la otra persona dice antes de responder",
+              category: HabitCategory.SOCIAL,
+              streak: 0,
+              lastCompleted: null,
+              goal: 21
+            }
+          });
+        }
+        break;
+        
+      case 'Dedicado':
+        // Para dedicados, enfoque en optimización y eficiencia
+        
+        // Recomendación de ejercicio avanzado para dedicados
+        recommendations.push({
+          title: "Entrenamiento integral - 21 días de transformación",
+          description: "Implementa un programa que combine cardio y fuerza 4 veces por semana. La ciencia deportiva avanzada muestra que 21 días de entrenamiento combinado aumenta la resistencia en un 22% y acelera el metabolismo basal en un 11%.",
+          icon: <Dumbbell className="text-blue-400" />,
+          habitSuggestion: {
+            name: "Entrenamiento combinado",
+            description: "Realiza 30 minutos de entrenamiento combinado cardio+fuerza cuatro veces por semana",
+            category: HabitCategory.FITNESS,
+            streak: 0,
+            lastCompleted: null,
+            goal: 21
+          }
+        });
+        
+        // Recomendación financiera para dedicados
+        recommendations.push({
+          title: "Optimización financiera - 21 días hacia la libertad",
+          description: "Analiza y optimiza tus gastos fijos para aumentar tu tasa de ahorro. Los estudios económicos personales muestran que 21 días de análisis y ajuste financiero pueden incrementar el margen de ahorro en un 18% sin reducir la calidad de vida.",
+          icon: <DollarSign className="text-emerald-500" />,
+          habitSuggestion: {
+            name: "Análisis financiero semanal",
+            description: "Dedica una hora a la semana para analizar tus gastos y optimizar tu presupuesto",
+            category: HabitCategory.FINANCIAL,
+            streak: 0,
+            lastCompleted: null,
+            goal: 21
+          }
+        });
+        
+        // Recomendación de networking para dedicados
+        recommendations.push({
+          title: "Expansión de red - 21 días de conexiones estratégicas",
+          description: "Contacta a una persona nueva en tu campo profesional cada semana. Las investigaciones en capital social indican que 21 días de networking enfocado expanden tu red efectiva en un 34% y aumentan las oportunidades profesionales en un 29%.",
+          icon: <Users className="text-indigo-500" />,
+          habitSuggestion: {
+            name: "Networking estratégico semanal",
+            description: "Contacta y mantén una conversación significativa con un nuevo contacto profesional cada semana",
+            category: HabitCategory.CAREER,
+            streak: 0,
+            lastCompleted: null,
+            goal: 21
+          }
+        });
+        break;
+        
+      case 'Experto':
+        // Para expertos, enfoque en refinamiento y excelencia
+        
+        // Recomendación de alta performance física
+        recommendations.push({
+          title: "Alto rendimiento - 21 días de excelencia física",
+          description: "Implementa un programa de entrenamiento periodizado con recuperación activa. La ciencia deportiva de élite muestra que 21 días de entrenamiento periodizado aumenta los marcadores de rendimiento en un 16% y reduce el tiempo de recuperación en un 22%.",
+          icon: <Dumbbell className="text-blue-400" />,
+          habitSuggestion: {
+            name: "Entrenamiento periodizado",
+            description: "Sigue un plan de entrenamiento semanal con días de alta intensidad, volumen y recuperación activa",
+            category: HabitCategory.FITNESS,
+            streak: 0,
+            lastCompleted: null,
+            goal: 21
+          }
+        });
+        
+        // Recomendación de desarrollo de influencia
+        recommendations.push({
+          title: "Liderazgo e influencia - 21 días para inspirar",
+          description: "Practica técnicas avanzadas de comunicación persuasiva y storytelling. Los estudios de liderazgo muestran que 21 días de práctica deliberada en comunicación de alto impacto aumentan la capacidad de influencia en un 38% y la percepción de autoridad en un 26%.",
+          icon: <Users className="text-indigo-500" />,
+          habitSuggestion: {
+            name: "Comunicación persuasiva",
+            description: "Practica diariamente técnicas avanzadas de storytelling y comunicación persuasiva",
+            category: HabitCategory.SOCIAL,
+            streak: 0,
+            lastCompleted: null,
+            goal: 21
+          }
+        });
+        
+        // Recomendación de inversión para expertos
+        recommendations.push({
+          title: "Estrategia de inversión - 21 días de crecimiento financiero",
+          description: "Investiga y evalúa una oportunidad de inversión a largo plazo cada semana. La ciencia financiera avanzada muestra que 21 días de análisis sistemático de inversiones mejora la tasa de retorno ajustada al riesgo en un 14% y reduce las decisiones basadas en emociones en un 32%.",
+          icon: <DollarSign className="text-emerald-500" />,
+          habitSuggestion: {
+            name: "Análisis de inversiones semanal",
+            description: "Dedica 2 horas a la semana para investigar y evaluar oportunidades de inversión",
+            category: HabitCategory.FINANCIAL,
+            streak: 0,
+            lastCompleted: null,
+            goal: 21
+          }
+        });
+        break;
+        
+      case 'Maestro':
+        // Para maestros, enfoque en maestría y trascendencia
+        
+        // Recomendación de entrenamiento de élite
+        recommendations.push({
+          title: "Maestría física - 21 días de perfeccionamiento",
+          description: "Implementa un programa de entrenamiento de élite con métricas precisas. La ciencia de alto rendimiento muestra que 21 días de entrenamiento con seguimiento detallado optimiza la bioquímica corporal en un 11% y sincroniza los ciclos circadianos para máximo rendimiento en un 15%.",
+          icon: <Dumbbell className="text-blue-400" />,
+          habitSuggestion: {
+            name: "Entrenamiento de élite",
+            description: "Sigue un programa de entrenamiento de élite con seguimiento detallado de métricas de rendimiento",
+            category: HabitCategory.FITNESS,
+            streak: 0,
+            lastCompleted: null,
+            goal: 21
+          }
+        });
+        
+        // Recomendación de mentoría para maestros
+        recommendations.push({
+          title: "Mentoría - 21 días de legado",
+          description: "Dedica tiempo a mentorear a alguien con potencial en tu campo. La psicología del desarrollo muestra que 21 días de mentoría sistemática refuerzan el dominio personal en un 24% y desarrollan capacidades de liderazgo transformacional en un 19%.",
+          icon: <Users className="text-indigo-500" />,
+          habitSuggestion: {
+            name: "Mentoría semanal",
+            description: "Dedica una hora semanal a mentorear a alguien con potencial en tu campo",
+            category: HabitCategory.SOCIAL,
+            streak: 0,
+            lastCompleted: null,
+            goal: 21
+          }
+        });
+        
+        // Recomendación de desarrollo avanzado para maestros
+        recommendations.push({
+          title: "Desarrollo exponencial - 21 días de crecimiento máximo",
+          description: "Implementa prácticas avanzadas de desarrollo cognitivo y metacognición. La neurociencia de élite muestra que 21 días de prácticas avanzadas de pensamiento crítico aumentan la capacidad de resolución de problemas complejos en un 27% y mejoran la intuición experta en un 21%.",
+          icon: <BookOpen className="text-yellow-500" />,
+          habitSuggestion: {
+            name: "Prácticas avanzadas de desarrollo",
+            description: "Dedica 30 minutos diarios a ejercicios de metacognición y pensamiento crítico avanzado",
+            category: HabitCategory.READING,
+            streak: 0,
+            lastCompleted: null,
+            goal: 21
+          }
+        });
+        break;
+        
+      default:
+        // Recomendaciones generales si algo falla
+        recommendations.push({
+          title: "Mejora continua - 21 días de progreso",
+          description: "Establece una rutina diaria de aprendizaje y práctica. La ciencia del desarrollo de habilidades muestra que 21 días de práctica enfocada crean las bases neuronales para la automatización de comportamientos, aumentando la eficiencia en un 23%.",
+          icon: <BookOpen className="text-yellow-500" />,
+          habitSuggestion: {
+            name: "Aprendizaje diario",
+            description: "Dedica 20 minutos diarios a aprender algo nuevo en tu campo de interés",
+            category: HabitCategory.READING,
+            streak: 0,
+            lastCompleted: null,
+            goal: 21
+          }
+        });
+    }
+    
+    // Recomendaciones específicas por características del usuario (independientes del nivel)
+    
     // Recomendaciones basadas en estado físico
     if (userProfile.physicalCondition === PhysicalCondition.POOR) {
       recommendations.push({
-        title: "Mejora tu condición física",
-        description: "Comienza con caminatas diarias de 20 minutos y aumenta gradualmente la intensidad. Un estudio de la Universidad de Stanford demuestra que 21 días de actividad física moderada pueden establecer un hábito duradero y mejorar la resistencia cardiovascular hasta en un 15%.",
+        title: "Recuperación física - 21 días hacia la salud",
+        description: "Comienza con ejercicios muy suaves y aumenta gradualmente. La medicina deportiva indica que 21 días de actividad física progresiva puede mejorar los marcadores de salud básicos hasta en un 18%, incluso en personas con mala condición física previa.",
         icon: <Dumbbell className="text-blue-400" />,
         habitSuggestion: {
-          name: "Caminar 20 minutos diarios",
-          description: "Camina al menos 20 minutos cada día para mejorar tu condición física gradualmente",
-          category: HabitCategory.FITNESS,
-          streak: 0,
-          lastCompleted: null,
-          goal: 21
-        }
-      });
-    } else if (userProfile.physicalCondition === PhysicalCondition.AVERAGE) {
-      recommendations.push({
-        title: "Eleva tu estado físico",
-        description: "Incluye entrenamiento de fuerza 3 veces por semana además de cardio. La ciencia del desarrollo muscular indica que 21 días de entrenamiento consistente pueden aumentar tu masa muscular en un 8% y tu metabolismo basal en un 5%, mejorando tu composición corporal.",
-        icon: <Dumbbell className="text-blue-400" />,
-        habitSuggestion: {
-          name: "Entrenamiento de fuerza",
-          description: "Realiza ejercicios de fuerza 3 veces por semana durante al menos 30 minutos",
+          name: "Movimiento diario progresivo",
+          description: "Comienza con 10 minutos de actividad física muy suave y aumenta 1 minuto cada dos días",
           category: HabitCategory.FITNESS,
           streak: 0,
           lastCompleted: null,
@@ -64,12 +326,12 @@ const PersonalRecommendations = () => {
     // Recomendaciones basadas en empleo
     if (userProfile.employmentStatus === EmploymentStatus.UNEMPLOYED) {
       recommendations.push({
-        title: "Desarrollo profesional diario",
-        description: "Dedica 1 hora diaria a aprender nuevas habilidades en tu campo o explora nuevas áreas. El principio de los 21 días aplicado al aprendizaje muestra que puedes dominar los fundamentos de una nueva habilidad técnica con práctica diaria, aumentando tu valor en el mercado laboral hasta en un 20%.",
+        title: "Desarrollo profesional estructurado - 21 días de preparación",
+        description: "Dedica 2 horas diarias a desarrollar habilidades de alta demanda. Las investigaciones en reinserción laboral muestran que 21 días de capacitación enfocada aumentan las posibilidades de empleabilidad en un 35% y mejoran la confianza en entrevistas en un 46%.",
         icon: <Briefcase className="text-green-500" />,
         habitSuggestion: {
-          name: "Aprendizaje profesional diario",
-          description: "Dedica 1 hora diaria a estudiar o practicar habilidades relevantes para tu carrera",
+          name: "Desarrollo de habilidades profesionales",
+          description: "Dedica 2 horas diarias a desarrollar una habilidad específica de alta demanda en el mercado laboral",
           category: HabitCategory.CAREER,
           streak: 0,
           lastCompleted: null,
@@ -81,12 +343,12 @@ const PersonalRecommendations = () => {
     // Recomendaciones basadas en malos hábitos
     if (userProfile.badHabits?.includes(BadHabit.PORNOGRAPHY)) {
       recommendations.push({
-        title: "Control de impulsos - 21 días hacia la libertad",
-        description: "Establece un sistema de bloqueo en tus dispositivos y busca actividades alternativas cuando sientas el impulso. Estudios neurológicos demuestran que después de 21 días de abstinencia, los circuitos de recompensa del cerebro comienzan a recalibrarse, reduciendo la intensidad y frecuencia de los deseos compulsivos en un 60%.",
+        title: "Recalibración neuronal - 21 días de liberación",
+        description: "Implementa un sistema de bloqueo técnico y sustitución de actividades. La neurociencia de las adicciones muestra que 21 días de abstinencia total reducen los receptores dopaminérgicos asociados al consumo en un 38% y restablecen la sensibilidad del circuito de recompensa en un 27%.",
         icon: <Ban className="text-red-500" />,
         habitSuggestion: {
-          name: "Día libre de contenido pornográfico",
-          description: "Mantente un día completo sin consumir contenido pornográfico",
+          name: "Sustitución de impulsos",
+          description: "Cuando sientas un impulso, realiza inmediatamente 20 flexiones o una actividad física intensa de 2 minutos",
           category: HabitCategory.ABSTINENCE,
           streak: 0,
           lastCompleted: null,
@@ -97,12 +359,12 @@ const PersonalRecommendations = () => {
 
     if (userProfile.badHabits?.includes(BadHabit.PROCRASTINATION)) {
       recommendations.push({
-        title: "Combate la procrastinación - El método de los 21 días",
-        description: "Utiliza la técnica Pomodoro: 25 minutos de trabajo enfocado seguidos de 5 minutos de descanso. La investigación en productividad muestra que 21 días de uso consistente de este método puede incrementar tu eficiencia hasta en un 40% y reducir la ansiedad asociada a las tareas en un 30%.",
+        title: "Acción inmediata - 21 días de productividad",
+        description: "Utiliza la técnica 2-minutos: si algo toma menos de 2 minutos, hazlo inmediatamente. La psicología del comportamiento muestra que 21 días aplicando esta regla reduce la procrastinación en un 31% y aumenta la sensación de logro diario en un 27%.",
         icon: <BookOpen className="text-yellow-500" />,
         habitSuggestion: {
-          name: "Técnica Pomodoro diaria",
-          description: "Completa al menos 4 ciclos Pomodoro cada día (25 min trabajo/5 min descanso)",
+          name: "Regla de los 2 minutos",
+          description: "Aplica la regla de los 2 minutos: si algo toma menos de 2 minutos, hazlo inmediatamente sin posponerlo",
           category: HabitCategory.CAREER,
           streak: 0,
           lastCompleted: null,
@@ -111,132 +373,12 @@ const PersonalRecommendations = () => {
       });
     }
 
-    // Recomendaciones basadas en estado de relación
-    if (userProfile.relationshipStatus === RelationshipStatus.DIVORCED || 
-        userProfile.familyStatus === FamilyStatus.DIVORCED) {
-      recommendations.push({
-        title: "Reconstrucción personal - 21 días para redescubrirte",
-        description: "Establece nuevas rutinas y dedica tiempo a actividades que disfrutes en solitario. La psicología positiva ha demostrado que 21 días de auto-cuidado y reflexión consciente pueden reducir los niveles de cortisol (hormona del estrés) hasta en un 23% y aumentar los niveles de serotonina en un 15%, mejorando significativamente tu bienestar emocional.",
-        icon: <HeartHandshake className="text-purple-500" />,
-        habitSuggestion: {
-          name: "Tiempo para mí",
-          description: "Dedica 30 minutos diarios a una actividad que te genere paz y satisfacción personal",
-          category: HabitCategory.SOCIAL,
-          streak: 0,
-          lastCompleted: null,
-          goal: 21
-        }
-      });
-    }
-
-    // Recomendaciones basadas en habilidades de comunicación
-    if (userProfile.communicationSkills === CommunicationSkills.BEGINNER || 
-        userProfile.communicationSkills === CommunicationSkills.INTERMEDIATE) {
-      recommendations.push({
-        title: "Mejora tu comunicación - Transformación en 21 días",
-        description: "Practica técnicas de escucha activa y busca oportunidades para conversar con personas nuevas semanalmente. Los expertos en desarrollo de habilidades sociales afirman que 21 días de práctica deliberada pueden mejorar tu capacidad de comunicación en un 30% y reducir la ansiedad social en un 25%.",
-        icon: <Users className="text-indigo-500" />,
-        habitSuggestion: {
-          name: "Conversación significativa diaria",
-          description: "Ten al menos una conversación profunda cada día, practicando la escucha activa",
-          category: HabitCategory.SOCIAL,
-          streak: 0,
-          lastCompleted: null,
-          goal: 21
-        }
-      });
-    }
-
-    // Añadir algunas recomendaciones financieras si es necesario
-    if (userProfile.savings === 'low' || userProfile.savings === 'none') {
-      recommendations.push({
-        title: "Planificación financiera - 21 días hacia la estabilidad",
-        description: "Comienza a ahorrar al menos el 10% de tus ingresos mensuales y busca reducir gastos innecesarios. Los expertos financieros señalan que 21 días de control de gastos y ahorro consciente pueden establecer un patrón neurológico de disciplina financiera que permanece activo hasta 3 años después de la intervención inicial.",
-        icon: <DollarSign className="text-emerald-500" />,
-        habitSuggestion: {
-          name: "Registro diario de gastos",
-          description: "Anota todos tus gastos diarios y revisa tu presupuesto",
-          category: HabitCategory.FINANCIAL,
-          streak: 0,
-          lastCompleted: null,
-          goal: 21
-        }
-      });
-    }
-
-    // Recomendación de lectura para todos
-    recommendations.push({
-      title: "Lectura diaria - 21 días hacia el conocimiento",
-      description: "Desarrolla el hábito de leer al menos 20 páginas diarias. Estudios neurológicos muestran que 21 días de lectura consistente pueden aumentar las conexiones neuronales en un 8.7%, mejorar el vocabulario en un 20% y reducir el riesgo de deterioro cognitivo en un 32% a largo plazo.",
-      icon: <BookOpen className="text-yellow-500" />,
-      habitSuggestion: {
-        name: "Lectura diaria",
-        description: "Lee al menos 20 páginas de un libro que aporte valor a tu desarrollo",
-        category: HabitCategory.READING,
-        streak: 0,
-        lastCompleted: null,
-        goal: 21
-      }
-    });
-
-    // Asegurar que siempre haya al menos 3 recomendaciones
-    if (recommendations.length < 3) {
-      const generalRecommendations = [
-        {
-          title: "Ejercicio consistente - La transformación de los 21 días",
-          description: "Integra 30 minutos de actividad física diaria para mantener tu cuerpo y mente en óptimas condiciones. La neurociencia del ejercicio demuestra que 21 días de actividad constante pueden aumentar los niveles de BDNF (factor neurotrófico derivado del cerebro) en un 14%, mejorando la cognición, memoria y estado de ánimo.",
-          icon: <Dumbbell className="text-blue-400" />,
-          habitSuggestion: {
-            name: "30 minutos de ejercicio diario",
-            description: "Realiza al menos 30 minutos de actividad física cada día",
-            category: HabitCategory.FITNESS,
-            streak: 0,
-            lastCompleted: null,
-            goal: 21
-          }
-        },
-        {
-          title: "Desarrollo de red de contactos - 21 días de conexiones estratégicas",
-          description: "Conecta con al menos una persona nueva en tu campo cada semana. Las investigaciones en capital social indican que 21 días de networking estratégico pueden expandir tu red profesional útil en un 40% y aumentar las oportunidades de crecimiento laboral en un 27%.",
-          icon: <Users className="text-indigo-500" />,
-          habitSuggestion: {
-            name: "Networking semanal",
-            description: "Establece contacto con al menos una nueva persona en tu campo profesional cada semana",
-            category: HabitCategory.SOCIAL,
-            streak: 0,
-            lastCompleted: null,
-            goal: 21
-          }
-        },
-        {
-          title: "Planificación semanal - El poder de 21 días de organización",
-          description: "Dedica 30 minutos cada domingo a planificar tus objetivos y tareas para la próxima semana. Los estudios de gestión del tiempo demuestran que 21 días de planificación sistemática pueden incrementar tu productividad en un 37% y reducir el estrés relacionado con tareas pendientes en un 29%.",
-          icon: <Calendar className="text-green-500" />,
-          habitSuggestion: {
-            name: "Planificación semanal",
-            description: "Dedica 30 minutos cada domingo a planificar tu semana",
-            category: HabitCategory.CAREER,
-            streak: 0,
-            lastCompleted: null,
-            goal: 21
-          }
-        },
-      ];
-
-      // Añadir recomendaciones generales hasta alcanzar al menos 3
-      for (let i = 0; i < generalRecommendations.length && recommendations.length < 3; i++) {
-        // Verificar que no estemos duplicando recomendaciones
-        if (!recommendations.some(rec => rec.title === generalRecommendations[i].title)) {
-          recommendations.push(generalRecommendations[i]);
-        }
-      }
-    }
-
-    // Limitar a máximo 4 recomendaciones
+    // Limitar a máximo 4 recomendaciones más relevantes
     return recommendations.slice(0, 4);
   };
 
-  const recommendations = getRecommendations();
+  // Memoize recommendations to avoid recalculating on every render
+  const recommendations = useMemo(() => getRecommendations(), [userProfile, level]);
 
   // Función para añadir un hábito sugerido
   const handleAddHabit = (habitSuggestion) => {
@@ -260,7 +402,7 @@ const PersonalRecommendations = () => {
   return (
     <Card className="bg-evolve-dark/75 border-evolve-purple/30 text-white">
       <CardHeader>
-        <CardTitle>Recomendaciones Personalizadas</CardTitle>
+        <CardTitle>Recomendaciones Personalizadas para Nivel {level}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-5">

@@ -1,185 +1,135 @@
 
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Hammer, Wrench } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useUser } from '@/context/UserContext';
+import { Check, ChevronRight, Hammer, Wrench } from 'lucide-react';
 
-type WelcomeModalProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-};
-
-const WelcomeModal = ({ open, onOpenChange }: WelcomeModalProps) => {
-  const { userProfile, isOnboarded } = useUser();
-  const [step, setStep] = useState(1);
-  const totalSteps = 3;
+const WelcomeModal = () => {
+  const [isVisible, setIsVisible] = useState(true);
+  const [currentStep, setCurrentStep] = useState(1);
   const navigate = useNavigate();
-
-  const handleNextStep = () => {
-    if (step < totalSteps) {
-      setStep(step + 1);
-    } else {
-      // En lugar de solo cerrar el modal, manejamos la navegación aquí
-      onOpenChange(false);
+  const totalSteps = 3;
+  
+  // Hide modal on escape key
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        handleClose();
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, []);
+  
+  // If this modal was already shown, don't show it again
+  useEffect(() => {
+    const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
+    if (hasSeenWelcome) {
+      setIsVisible(false);
     }
-  };
-
-  const handleCompleteProfile = () => {
-    onOpenChange(false);
-    // Usamos navigate para ir a onboarding de forma programática
-    navigate('/onboarding');
-  };
-
-  const handleGoToDashboard = () => {
-    onOpenChange(false);
-    // Usamos navigate para ir a dashboard de forma programática
+  }, []);
+  
+  const handleClose = () => {
+    setIsVisible(false);
+    localStorage.setItem('hasSeenWelcome', 'true');
+    // Navigate to dashboard when closing
     navigate('/dashboard');
   };
-
-  const renderStepContent = () => {
-    switch (step) {
-      case 1:
-        return (
-          <>
-            <DialogHeader>
-              <DialogTitle className="text-2xl md:text-3xl text-center text-white flex flex-col items-center">
-                <div className="w-16 h-16 bg-evolve-purple/20 rounded-full flex items-center justify-center mb-4">
-                  <Hammer className="w-8 h-8 text-evolve-purple" />
-                </div>
-                ¡Listo para <span className="text-evolve-purple">impulsarte</span>!
-              </DialogTitle>
-              <DialogDescription className="text-lg md:text-xl text-center text-white/80">
-                Alcanza tus metas y transforma tu vida
-              </DialogDescription>
-            </DialogHeader>
-            <div className="py-6 relative">
-              <div className="absolute inset-0 bg-gradient-to-b from-evolve-purple/5 to-transparent -z-10 rounded-lg"></div>
-              <img 
-                src="/placeholder.svg" 
-                alt="Motivational" 
-                className="w-40 h-40 mx-auto mb-4 opacity-75 drop-shadow-xl"
-              />
-              <p className="text-white/90 text-center">
-                AlphaEvolve te ayudará a convertirte en la mejor versión de ti mismo con un plan personalizado.
-              </p>
-            </div>
-          </>
-        );
-      case 2:
-        return (
-          <>
-            <DialogHeader>
-              <DialogTitle className="text-2xl md:text-3xl text-center text-white flex flex-col items-center">
-                <div className="w-16 h-16 bg-evolve-purple/20 rounded-full flex items-center justify-center mb-4">
-                  <Wrench className="w-8 h-8 text-evolve-purple" />
-                </div>
-                Di adiós a tus <span className="text-evolve-purple">malos hábitos</span>
-              </DialogTitle>
-              <DialogDescription className="text-lg md:text-xl text-center text-white/80">
-                Es hora de romper con el pasado
-              </DialogDescription>
-            </DialogHeader>
-            <div className="py-6 relative">
-              <div className="absolute inset-0 bg-gradient-to-b from-evolve-purple/5 to-transparent -z-10 rounded-lg"></div>
-              <img 
-                src="/placeholder.svg" 
-                alt="Breaking Bad Habits" 
-                className="w-40 h-40 mx-auto mb-4 opacity-75 drop-shadow-xl"
-              />
-              <p className="text-white/90 text-center">
-                Nuestro sistema te ayudará a identificar y superar los hábitos que te impiden progresar.
-              </p>
-            </div>
-          </>
-        );
-      case 3:
-        return (
-          <>
-            <DialogHeader>
-              <DialogTitle className="text-2xl md:text-3xl text-center text-white flex flex-col items-center">
-                <div className="w-16 h-16 bg-evolve-purple/20 rounded-full flex items-center justify-center mb-4">
-                  <Wrench className="w-8 h-8 text-evolve-purple" />
-                </div>
-                <span className="text-evolve-purple">¡Comienza ya</span> tu transformación!
-              </DialogTitle>
-              <DialogDescription className="text-lg md:text-xl text-center text-white/80">
-                Tu nueva vida te espera
-              </DialogDescription>
-            </DialogHeader>
-            <div className="py-6 relative">
-              <div className="absolute inset-0 bg-gradient-to-b from-evolve-purple/5 to-transparent -z-10 rounded-lg"></div>
-              <img 
-                src="/placeholder.svg" 
-                alt="Transformation" 
-                className="w-40 h-40 mx-auto mb-4 opacity-75 drop-shadow-xl" 
-              />
-              <p className="text-white/90 text-center">
-                {isOnboarded ? 
-                  'Tu perfil está listo. ¡Dirígete al dashboard para ver tu progreso!' : 
-                  'Completa tu perfil para obtener un plan personalizado y comenzar tu evolución.'}
-              </p>
-            </div>
-          </>
-        );
-      default:
-        return null;
+  
+  const handleNext = () => {
+    if (currentStep < totalSteps) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      handleClose();
     }
   };
-
+  
+  const steps = [
+    {
+      title: "Bienvenido a Evolve Alpha",
+      content: "Estás a punto de comenzar tu camino de transformación personal. Evolve Alpha te guiará en el desarrollo de hábitos, capacidades y mentalidad para convertirte en tu mejor versión.",
+      icon: <Wrench className="w-8 h-8 text-evolve-purple" />
+    },
+    {
+      title: "Cómo funciona",
+      content: "Primero, realiza una evaluación completa de tu situación actual. Luego, basándose en estos datos, crearemos un plan personalizado para ti. Seguirás hábitos diarios durante 21 días para formar nuevos patrones.",
+      icon: <Hammer className="w-8 h-8 text-evolve-purple" />
+    },
+    {
+      title: "Tu primera misión",
+      content: "Para comenzar, completa el proceso de onboarding respondiendo algunas preguntas sobre tu vida actual. Esto nos permitirá crear recomendaciones personalizadas para tu situación específica.",
+      icon: <ChevronRight className="w-8 h-8 text-evolve-purple" />
+    }
+  ];
+  
+  if (!isVisible) return null;
+  
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-evolve-dark border-evolve-purple/30 text-white max-w-md w-11/12 rounded-lg shadow-lg shadow-evolve-purple/20 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-evolve-purple/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
-        <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-evolve-purple/10 rounded-full blur-2xl"></div>
+    <div className="fixed inset-0 flex items-center justify-center z-50">
+      {/* Modal backdrop - Making it less dark and ensuring it doesn't remain */}
+      <div 
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" 
+        onClick={handleClose}
+        style={{ opacity: 0.8 }} // Set specific opacity
+      ></div>
+      
+      {/* Modal content */}
+      <Card className="relative z-10 w-full max-w-md mx-4 bg-evolve-dark/90 border-evolve-purple/30 text-white shadow-evolve animate-fade-in">
+        <div className="absolute top-0 right-0 w-40 h-40 bg-evolve-purple/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-evolve-purple/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
         
-        <div className="relative z-10">
-          {renderStepContent()}
-          <DialogFooter>
-            <div className="w-full flex flex-col space-y-2">
-              {step < totalSteps ? (
-                <Button 
-                  onClick={handleNextStep} 
-                  className="w-full bg-evolve-purple hover:bg-evolve-purple/80 text-white group transition-all"
-                >
-                  Continuar <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              ) : (
-                <Button 
-                  onClick={handleNextStep} 
-                  className="w-full bg-evolve-purple hover:bg-evolve-purple/80 text-white group transition-all"
-                >
-                  Entendido <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              )}
-              
-              {!isOnboarded && step === totalSteps && (
-                <Button 
-                  onClick={handleCompleteProfile} 
-                  variant="outline" 
-                  className="w-full border-evolve-purple text-evolve-purple hover:bg-evolve-purple/10 group transition-all"
-                >
-                  <Wrench className="mr-2 h-4 w-4" />
-                  Completar mi perfil
-                </Button>
-              )}
-              
-              {isOnboarded && step === totalSteps && (
-                <Button 
-                  onClick={handleGoToDashboard} 
-                  variant="outline" 
-                  className="w-full border-evolve-purple text-evolve-purple hover:bg-evolve-purple/10 group transition-all"
-                >
-                  <Wrench className="mr-2 h-4 w-4" />
-                  Ir al Dashboard
-                </Button>
-              )}
-            </div>
-          </DialogFooter>
-        </div>
-      </DialogContent>
-    </Dialog>
+        <CardHeader className="text-center pt-8 relative">
+          <div className="mb-4 mx-auto bg-evolve-dark/70 p-4 rounded-full border border-evolve-purple/30">
+            {steps[currentStep - 1].icon}
+          </div>
+          <h2 className="text-2xl font-bold">{steps[currentStep - 1].title}</h2>
+        </CardHeader>
+        
+        <CardContent className="text-center px-6 py-4 relative">
+          <p className="text-gray-300">{steps[currentStep - 1].content}</p>
+          
+          <div className="flex justify-center mt-6 space-x-2">
+            {Array.from({length: totalSteps}).map((_, i) => (
+              <div 
+                key={i} 
+                className={`w-3 h-3 rounded-full ${i + 1 <= currentStep ? 'bg-evolve-purple' : 'bg-gray-600'}`}
+              ></div>
+            ))}
+          </div>
+        </CardContent>
+        
+        <CardFooter className="flex justify-between pt-2 pb-6 px-6">
+          <Button 
+            variant="outline" 
+            onClick={handleClose}
+            className="border-gray-600 text-gray-300 hover:bg-gray-800"
+          >
+            Saltar
+          </Button>
+          
+          <Button 
+            onClick={handleNext}
+            className="bg-evolve-purple hover:bg-evolve-purple/80 text-white"
+          >
+            {currentStep === totalSteps ? (
+              <>
+                <span>Comenzar</span>
+                <Check className="ml-2 h-4 w-4" />
+              </>
+            ) : (
+              <>
+                <span>Siguiente</span>
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </>
+            )}
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
   );
 };
 

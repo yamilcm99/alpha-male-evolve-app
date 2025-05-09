@@ -4,7 +4,7 @@ import { useUser } from '@/context/UserContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { calculateUserLevel } from '@/utils/userLevelCalculator';
-import { Wrench, ArrowUp } from 'lucide-react';
+import { Wrench, ArrowUp, Hammer, ArrowUpRight } from 'lucide-react';
 
 const UserSummary = () => {
   const { userProfile } = useUser();
@@ -14,6 +14,18 @@ const UserSummary = () => {
   }
   
   const { level, score } = calculateUserLevel(userProfile);
+  
+  // Determine appropriate icon based on user level
+  const getLevelIcon = () => {
+    switch(level) {
+      case 'Principiante': return <Wrench className="w-3 h-3 mr-1" />;
+      case 'Aprendiz': return <Wrench className="w-3 h-3 mr-1" />;
+      case 'Dedicado': return <Hammer className="w-3 h-3 mr-1" />;
+      case 'Experto': return <Wrench className="w-3 h-3 mr-1 rotate-45" />;
+      case 'Maestro': return <ArrowUpRight className="w-3 h-3 mr-1" />;
+      default: return <Wrench className="w-3 h-3 mr-1" />;
+    }
+  };
   
   return (
     <Card className="bg-evolve-dark/75 border-evolve-purple/30 text-white overflow-hidden relative">
@@ -29,7 +41,11 @@ const UserSummary = () => {
             </AvatarFallback>
           </Avatar>
           <div className="absolute -bottom-1 -right-1 bg-evolve-purple text-white rounded-full w-6 h-6 flex items-center justify-center border border-evolve-dark">
-            <Wrench size={14} />
+            {level === 'Principiante' && <Wrench size={14} />}
+            {level === 'Aprendiz' && <Wrench size={14} />}
+            {level === 'Dedicado' && <Hammer size={14} />}
+            {level === 'Experto' && <Wrench size={14} className="rotate-45" />}
+            {level === 'Maestro' && <ArrowUpRight size={14} />}
           </div>
         </div>
         
@@ -37,7 +53,7 @@ const UserSummary = () => {
           <h2 className="font-bold text-xl flex items-center">
             {userProfile.name || "Usuario"}
             <div className="ml-2 bg-evolve-purple/20 text-evolve-purple text-xs px-2 py-0.5 rounded-full flex items-center">
-              <Wrench className="w-3 h-3 mr-1" />
+              {getLevelIcon()}
               <span>Nivel {level}</span>
             </div>
           </h2>

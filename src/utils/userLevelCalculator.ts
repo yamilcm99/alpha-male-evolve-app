@@ -61,5 +61,33 @@ export const calculateUserLevel = (userProfile: UserProfile) => {
   else if (score <= 80) level = 'Experto';
   else level = 'Maestro';
   
-  return { level, score };
+  // Include min/max scores for each level for the UI
+  const levelRanges = {
+    Principiante: { min: 0, max: 20 },
+    Aprendiz: { min: 21, max: 40 },
+    Dedicado: { min: 41, max: 60 },
+    Experto: { min: 61, max: 80 },
+    Maestro: { min: 81, max: 100 }
+  };
+
+  // Determine score percentage within the current level range
+  const currentRange = levelRanges[level as keyof typeof levelRanges];
+  const levelProgress = ((score - currentRange.min) / (currentRange.max - currentRange.min)) * 100;
+  
+  // Generate level completion data - indicates if previous levels are complete
+  const levelCompletions = {
+    Principiante: score > 20 ? 100 : Math.min(score / 20 * 100, 100),
+    Aprendiz: score > 40 ? 100 : (score <= 20 ? 0 : (score - 20) / 20 * 100),
+    Dedicado: score > 60 ? 100 : (score <= 40 ? 0 : (score - 40) / 20 * 100),
+    Experto: score > 80 ? 100 : (score <= 60 ? 0 : (score - 60) / 20 * 100),
+    Maestro: score <= 80 ? 0 : (score - 80) / 20 * 100
+  };
+  
+  return { 
+    level, 
+    score, 
+    levelProgress, 
+    levelCompletions,
+    levelRanges
+  };
 };

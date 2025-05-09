@@ -21,7 +21,7 @@ const AlphaLevels = () => {
     return null;
   }
 
-  const { level, score } = calculateUserLevel(userProfile);
+  const { level, score, levelCompletions } = calculateUserLevel(userProfile);
   const currentLevelObj = levels.find(l => l.name === level) || levels[0];
   
   return (
@@ -79,7 +79,10 @@ const AlphaLevels = () => {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
           {levels.map((lvl, index) => {
             const isCurrentLevel = lvl.name === level;
-            const isPastLevel = level !== levels[0].name && index < levels.findIndex(l => l.name === level);
+            const isPastLevel = index < levels.findIndex(l => l.name === level);
+            
+            // Use the levelCompletions data to determine the progress for each level bar
+            const levelProgress = levelCompletions[lvl.name as keyof typeof levelCompletions];
             
             return (
               <div 
@@ -97,11 +100,7 @@ const AlphaLevels = () => {
                   <div className="relative pt-3">
                     <div className="overflow-hidden h-6 text-xs flex rounded-full bg-gray-800/80">
                       <div 
-                        style={{ 
-                          width: level === lvl.name 
-                            ? `${((score - lvl.minScore) / (lvl.maxScore - lvl.minScore)) * 100}%` 
-                            : level !== levels[index+1]?.name ? (level !== levels[index-1]?.name ? '0%' : '100%') : '0%'
-                        }} 
+                        style={{ width: `${levelProgress}%` }}
                         className={`${lvl.color} rounded-l-full shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center relative overflow-hidden`}
                       >
                         <div className="absolute inset-0 bg-white/10 pattern-diagonal-stripes pattern-white pattern-bg-transparent pattern-size-2 pattern-opacity-10"></div>
@@ -110,9 +109,7 @@ const AlphaLevels = () => {
                     <div 
                       className="w-8 h-8 rounded-full overflow-hidden border-2 border-white absolute -top-1 -right-3 flex items-center justify-center bg-evolve-dark shadow-lg transition-all"
                       style={{ 
-                        right: level === lvl.name 
-                          ? `calc(${100 - ((score - lvl.minScore) / (lvl.maxScore - lvl.minScore)) * 100}% - 16px)` 
-                          : 'calc(100% - 16px)'
+                        right: `calc(${100 - levelProgress}% - 16px)`
                       }}
                     >
                       <Gauge className="w-4 h-4 text-evolve-purple" />
