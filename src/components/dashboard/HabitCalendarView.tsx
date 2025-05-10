@@ -52,7 +52,7 @@ const HabitCalendarView = () => {
   };
   
   return (
-    <Card hover={true} className="h-full">
+    <Card hover={true} className="h-full bg-evolve-dark/75 border-evolve-purple/30 text-white">
       <CardHeader>
         <div className="flex items-center space-x-2">
           <Calendar className="h-5 w-5 text-evolve-purple" />

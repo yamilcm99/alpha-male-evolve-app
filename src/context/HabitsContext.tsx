@@ -60,7 +60,9 @@ export const HabitsProvider = ({ children }: HabitsProviderProps) => {
       goal: habit.goal || 21, // Default to 21 days
       cycleCompleted: false,
       cycleCompletedAt: null,
-      cyclesCompleted: 0
+      cyclesCompleted: 0,
+      requiredLevel: habit.requiredLevel || "Principiante", // Default level
+      isMegaHabit: habit.isMegaHabit || false // Default not a mega habit
     };
     
     setHabits((prev) => [...prev, completedHabit]);
@@ -88,15 +90,35 @@ export const HabitsProvider = ({ children }: HabitsProviderProps) => {
             cycleCompletedAt = now;
             cyclesCompleted += 1;
             
-            // Celebrate the achievement
-            toast.success(`¡Felicidades! Has completado tu ciclo de ${habit.goal} días para "${habit.name}". Este hábito ahora forma parte de tu rutina.`, {
-              duration: 6000
-            });
+            // Mensaje de felicitación basado en si es mega hábito o no
+            if (habit.isMegaHabit) {
+              toast.success(`¡GRAN LOGRO! Has completado tu mega hábito "${habit.name}" de ${habit.goal} días. ¡Recibes el doble de puntos!`, {
+                duration: 6000
+              });
+            } else {
+              toast.success(`¡Felicidades! Has completado tu ciclo de ${habit.goal} días para "${habit.name}". Este hábito ahora forma parte de tu rutina.`, {
+                duration: 5000
+              });
+            }
             
             // Unlock achievement for completing a habit cycle
             const habitCycleAchievement = achievements.find(a => a.name === "Maestro de hábitos");
             if (habitCycleAchievement && !habitCycleAchievement.unlockedAt) {
               unlockAchievement(habitCycleAchievement.id);
+            }
+
+            // Mega hábitos desbloqueando logro especial
+            if (habit.isMegaHabit) {
+              const megaHabitAchievement = achievements.find(a => a.name === "Megaevolución");
+              if (megaHabitAchievement) {
+                const completedMegaHabits = prev.filter(h => h.isMegaHabit && h.cycleCompleted).length;
+                if (completedMegaHabits + 1 >= megaHabitAchievement.requirement && !megaHabitAchievement.unlockedAt) {
+                  unlockAchievement(megaHabitAchievement.id);
+                  toast.success(`¡Logro desbloqueado: ${megaHabitAchievement.name}!`, {
+                    duration: 4000
+                  });
+                }
+              }
             }
           }
           
@@ -117,7 +139,9 @@ export const HabitsProvider = ({ children }: HabitsProviderProps) => {
     const firstHabitAchievement = achievements.find(a => a.name === "Primer Paso");
     if (firstHabitAchievement && !firstHabitAchievement.unlockedAt) {
       unlockAchievement(firstHabitAchievement.id);
-      toast.success("¡Logro desbloqueado: Primer Paso!");
+      toast.success("¡Logro desbloqueado: Primer Paso!", {
+        duration: 3000
+      });
     }
 
     // Check if any achievements should be unlocked
@@ -134,20 +158,24 @@ export const HabitsProvider = ({ children }: HabitsProviderProps) => {
       const habitCategory = habit.category.toString().toLowerCase();
       const achievementCategory = achievement.category.toString().toLowerCase();
       
-      // For overall category achievements
+      // Para logros de categoría general
       if (achievementCategory === "overall" && 
           habit.streak >= achievement.requirement && 
           !achievement.unlockedAt) {
         unlockAchievement(achievement.id);
-        toast.success(`¡Logro desbloqueado: ${achievement.name}!`);
+        toast.success(`¡Logro desbloqueado: ${achievement.name}!`, {
+          duration: 3000
+        });
       }
       
-      // For specific category achievements
+      // Para logros de categoría específica
       if (habitCategory === achievementCategory && 
           habit.streak >= achievement.requirement && 
           !achievement.unlockedAt) {
         unlockAchievement(achievement.id);
-        toast.success(`¡Logro desbloqueado: ${achievement.name}!`);
+        toast.success(`¡Logro desbloqueado: ${achievement.name}!`, {
+          duration: 3000
+        });
       }
     });
   };

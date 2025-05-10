@@ -18,8 +18,8 @@ const DashboardFilters = ({
   setTimeRange
 }: DashboardFiltersProps) => {
   return (
-    <Card hover={false} className="mb-6 sticky top-0 z-10">
-      <CardContent className="py-4 flex flex-wrap gap-2 items-center justify-between">
+    <Card hover={false} className="mb-6 sticky top-0 z-10 max-w-screen-xl mx-auto">
+      <CardContent className="py-3 flex flex-wrap gap-2 items-center justify-between">
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-evolve-purple" />
           <span className="text-sm font-medium">Filtros:</span>

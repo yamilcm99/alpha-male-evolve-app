@@ -146,6 +146,10 @@ export type Habit = {
   cycleCompleted?: boolean; // Track if 21-day cycle is completed
   cycleCompletedAt?: Date | null; // When the 21-day cycle was completed
   cyclesCompleted?: number; // Number of 21-day cycles completed
+  requiredLevel?: string; // Nivel requerido para desbloquear este hábito
+  isMegaHabit?: boolean; // Indicador de mega hábito (doble de puntos)
+  benefits?: HabitBenefit[]; // Áreas que beneficia este hábito
+  difficulty?: HabitDifficulty; // Dificultad del hábito
 };
 
 export enum HabitCategory {
@@ -156,6 +160,20 @@ export enum HabitCategory {
   SOCIAL = "social",
   FINANCIAL = "financial",
   OTHER = "other"
+}
+
+export enum HabitBenefit {
+  PHYSICAL = "physical",
+  MENTAL = "mental",
+  SOCIAL = "social",
+  FINANCIAL = "financial"
+}
+
+export enum HabitDifficulty {
+  EASY = "easy",
+  MEDIUM = "medium", 
+  HARD = "hard",
+  VERY_HARD = "very_hard"
 }
 
 export type Achievement = {

@@ -7,13 +7,339 @@ import {
   AchievementCategory, 
   BadHabit, 
   Goal, 
-  GoalCategory 
+  GoalCategory,
+  HabitBenefit,
+  HabitDifficulty
 } from '@/types/user';
 
 export const createInitialHabits = (badHabits: BadHabit[]): Habit[] => {
   const habits: Habit[] = [];
   
-  // Create habits based on user's bad habits
+  // Hábitos básicos (Nivel Principiante)
+  habits.push(
+    {
+      id: uuidv4(),
+      name: "Lectura diaria",
+      description: "Lee al menos 15 minutos al día",
+      category: HabitCategory.READING,
+      streak: 0,
+      lastCompleted: null,
+      goal: 21,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Principiante",
+      benefits: [HabitBenefit.MENTAL, HabitBenefit.SOCIAL],
+      difficulty: HabitDifficulty.EASY
+    },
+    {
+      id: uuidv4(),
+      name: "Ejercicio básico",
+      description: "Realiza al menos 10 minutos de ejercicio al día",
+      category: HabitCategory.FITNESS,
+      streak: 0,
+      lastCompleted: null,
+      goal: 21,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Principiante",
+      benefits: [HabitBenefit.PHYSICAL, HabitBenefit.MENTAL],
+      difficulty: HabitDifficulty.EASY
+    },
+    {
+      id: uuidv4(),
+      name: "Control de gastos",
+      description: "Registra tus gastos diarios",
+      category: HabitCategory.FINANCIAL,
+      streak: 0,
+      lastCompleted: null,
+      goal: 21,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Principiante",
+      benefits: [HabitBenefit.FINANCIAL, HabitBenefit.MENTAL],
+      difficulty: HabitDifficulty.EASY
+    },
+    {
+      id: uuidv4(),
+      name: "Contactar a un amigo",
+      description: "Comunícate con un amigo o familiar que hace tiempo no ves",
+      category: HabitCategory.SOCIAL,
+      streak: 0,
+      lastCompleted: null,
+      goal: 7,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Principiante",
+      benefits: [HabitBenefit.SOCIAL, HabitBenefit.MENTAL],
+      difficulty: HabitDifficulty.EASY
+    }
+  );
+  
+  // Hábitos para niveles Aprendiz
+  habits.push(
+    {
+      id: uuidv4(),
+      name: "30 minutos de ejercicio",
+      description: "Realiza al menos 30 minutos de ejercicio",
+      category: HabitCategory.FITNESS,
+      streak: 0,
+      lastCompleted: null,
+      goal: 21,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Aprendiz",
+      benefits: [HabitBenefit.PHYSICAL, HabitBenefit.MENTAL],
+      difficulty: HabitDifficulty.MEDIUM
+    },
+    {
+      id: uuidv4(),
+      name: "Estudiar matemáticas",
+      description: "Dedica 30 minutos a estudiar un tema de matemáticas",
+      category: HabitCategory.CAREER,
+      streak: 0,
+      lastCompleted: null,
+      goal: 14,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Aprendiz",
+      benefits: [HabitBenefit.MENTAL, HabitBenefit.CAREER],
+      difficulty: HabitDifficulty.MEDIUM
+    },
+    {
+      id: uuidv4(),
+      name: "Ahorro diario",
+      description: "Guarda un porcentaje fijo de tus ingresos diarios",
+      category: HabitCategory.FINANCIAL,
+      streak: 0,
+      lastCompleted: null,
+      goal: 21,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Aprendiz",
+      benefits: [HabitBenefit.FINANCIAL],
+      difficulty: HabitDifficulty.MEDIUM
+    },
+    {
+      id: uuidv4(),
+      name: "Una semana en el gimnasio",
+      description: "Asiste al gimnasio durante 5 días consecutivos",
+      category: HabitCategory.FITNESS,
+      streak: 0,
+      lastCompleted: null,
+      goal: 5,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Aprendiz",
+      benefits: [HabitBenefit.PHYSICAL],
+      difficulty: HabitDifficulty.MEDIUM,
+      isMegaHabit: true
+    }
+  );
+  
+  // Hábitos para nivel Dedicado
+  habits.push(
+    {
+      id: uuidv4(),
+      name: "Disciplina física avanzada",
+      description: "Entrena con pesas o calistenia 45 minutos",
+      category: HabitCategory.FITNESS,
+      streak: 0,
+      lastCompleted: null,
+      goal: 21,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Dedicado",
+      benefits: [HabitBenefit.PHYSICAL, HabitBenefit.MENTAL],
+      difficulty: HabitDifficulty.HARD
+    },
+    {
+      id: uuidv4(),
+      name: "Estudio de física cuántica",
+      description: "Dedica 45 minutos a estudiar conceptos básicos de física cuántica",
+      category: HabitCategory.CAREER,
+      streak: 0,
+      lastCompleted: null,
+      goal: 14,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Dedicado",
+      benefits: [HabitBenefit.MENTAL],
+      difficulty: HabitDifficulty.HARD
+    },
+    {
+      id: uuidv4(),
+      name: "Networking profesional",
+      description: "Establece contacto con un nuevo profesional de tu industria",
+      category: HabitCategory.SOCIAL,
+      streak: 0,
+      lastCompleted: null,
+      goal: 10,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Dedicado",
+      benefits: [HabitBenefit.SOCIAL, HabitBenefit.CAREER],
+      difficulty: HabitDifficulty.MEDIUM
+    },
+    {
+      id: uuidv4(),
+      name: "3 semanas en el gimnasio",
+      description: "Completa 3 semanas consecutivas asistiendo al gimnasio 5 días por semana",
+      category: HabitCategory.FITNESS,
+      streak: 0,
+      lastCompleted: null,
+      goal: 15,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Dedicado",
+      benefits: [HabitBenefit.PHYSICAL, HabitBenefit.MENTAL],
+      difficulty: HabitDifficulty.HARD,
+      isMegaHabit: true
+    }
+  );
+  
+  // Hábitos para nivel Experto
+  habits.push(
+    {
+      id: uuidv4(),
+      name: "Meditación diaria",
+      description: "Practica 20 minutos de meditación enfocada",
+      category: HabitCategory.SOCIAL,
+      streak: 0,
+      lastCompleted: null,
+      goal: 30,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Experto",
+      benefits: [HabitBenefit.MENTAL, HabitBenefit.SOCIAL],
+      difficulty: HabitDifficulty.HARD
+    },
+    {
+      id: uuidv4(),
+      name: "Inversión semanal",
+      description: "Destina un porcentaje de tus ingresos a inversiones productivas",
+      category: HabitCategory.FINANCIAL,
+      streak: 0,
+      lastCompleted: null,
+      goal: 12,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Experto",
+      benefits: [HabitBenefit.FINANCIAL],
+      difficulty: HabitDifficulty.HARD
+    },
+    {
+      id: uuidv4(),
+      name: "Dominio de un idioma",
+      description: "Dedica 1 hora al estudio avanzado de un idioma extranjero",
+      category: HabitCategory.CAREER,
+      streak: 0,
+      lastCompleted: null,
+      goal: 30,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Experto",
+      benefits: [HabitBenefit.CAREER, HabitBenefit.SOCIAL],
+      difficulty: HabitDifficulty.HARD
+    },
+    {
+      id: uuidv4(),
+      name: "5 días sin contenido digital",
+      description: "Abstente de redes sociales, videos y entretenimiento digital por 5 días",
+      category: HabitCategory.ABSTINENCE,
+      streak: 0,
+      lastCompleted: null,
+      goal: 5,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Experto",
+      benefits: [HabitBenefit.MENTAL, HabitBenefit.SOCIAL],
+      difficulty: HabitDifficulty.VERY_HARD,
+      isMegaHabit: true
+    }
+  );
+  
+  // Hábitos para nivel Maestro
+  habits.push(
+    {
+      id: uuidv4(),
+      name: "Entrenamientos de élite",
+      description: "Completa un entrenamiento de alta intensidad de 1 hora",
+      category: HabitCategory.FITNESS,
+      streak: 0,
+      lastCompleted: null,
+      goal: 30,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Maestro",
+      benefits: [HabitBenefit.PHYSICAL, HabitBenefit.MENTAL],
+      difficulty: HabitDifficulty.VERY_HARD
+    },
+    {
+      id: uuidv4(),
+      name: "Mentoría a otros",
+      description: "Ofrece una sesión de mentoría a alguien que lo necesite",
+      category: HabitCategory.SOCIAL,
+      streak: 0,
+      lastCompleted: null,
+      goal: 10,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Maestro",
+      benefits: [HabitBenefit.SOCIAL, HabitBenefit.MENTAL],
+      difficulty: HabitDifficulty.HARD
+    },
+    {
+      id: uuidv4(),
+      name: "Programación financiera",
+      description: "Diseña un plan de inversión a largo plazo (>5 años)",
+      category: HabitCategory.FINANCIAL,
+      streak: 0,
+      lastCompleted: null,
+      goal: 7,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Maestro",
+      benefits: [HabitBenefit.FINANCIAL],
+      difficulty: HabitDifficulty.VERY_HARD
+    },
+    {
+      id: uuidv4(),
+      name: "Superación total de adicciones",
+      description: "30 días consecutivos sin ceder a ningún impulso adictivo",
+      category: HabitCategory.ABSTINENCE,
+      streak: 0,
+      lastCompleted: null,
+      goal: 30,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Maestro",
+      benefits: [HabitBenefit.MENTAL, HabitBenefit.PHYSICAL, HabitBenefit.SOCIAL, HabitBenefit.FINANCIAL],
+      difficulty: HabitDifficulty.VERY_HARD,
+      isMegaHabit: true
+    }
+  );
+  
+  // Crear hábitos basados en los malos hábitos del usuario
   if (badHabits.includes(BadHabit.PORNOGRAPHY)) {
     habits.push({
       id: uuidv4(),
@@ -22,10 +348,30 @@ export const createInitialHabits = (badHabits: BadHabit[]): Habit[] => {
       category: HabitCategory.ABSTINENCE,
       streak: 0,
       lastCompleted: null,
-      goal: 21, // 21 días para formar el hábito
+      goal: 21,
       cycleCompleted: false,
       cycleCompletedAt: null,
-      cyclesCompleted: 0
+      cyclesCompleted: 0,
+      requiredLevel: "Principiante",
+      benefits: [HabitBenefit.MENTAL, HabitBenefit.SOCIAL],
+      difficulty: HabitDifficulty.MEDIUM
+    });
+    
+    habits.push({
+      id: uuidv4(),
+      name: "5 días sin pornografía",
+      description: "Mantente 5 días consecutivos sin pornografía",
+      category: HabitCategory.ABSTINENCE,
+      streak: 0,
+      lastCompleted: null,
+      goal: 5,
+      cycleCompleted: false,
+      cycleCompletedAt: null,
+      cyclesCompleted: 0,
+      requiredLevel: "Aprendiz",
+      benefits: [HabitBenefit.MENTAL, HabitBenefit.SOCIAL],
+      difficulty: HabitDifficulty.HARD,
+      isMegaHabit: true
     });
   }
   
@@ -37,10 +383,13 @@ export const createInitialHabits = (badHabits: BadHabit[]): Habit[] => {
       category: HabitCategory.ABSTINENCE,
       streak: 0,
       lastCompleted: null,
-      goal: 21, // 21 días para formar el hábito
+      goal: 21,
       cycleCompleted: false,
       cycleCompletedAt: null,
-      cyclesCompleted: 0
+      cyclesCompleted: 0,
+      requiredLevel: "Principiante",
+      benefits: [HabitBenefit.PHYSICAL, HabitBenefit.MENTAL, HabitBenefit.FINANCIAL],
+      difficulty: HabitDifficulty.MEDIUM
     });
   }
   
@@ -52,58 +401,22 @@ export const createInitialHabits = (badHabits: BadHabit[]): Habit[] => {
       category: HabitCategory.ABSTINENCE,
       streak: 0,
       lastCompleted: null,
-      goal: 21, // 21 días para formar el hábito
+      goal: 21,
       cycleCompleted: false,
       cycleCompletedAt: null,
-      cyclesCompleted: 0
+      cyclesCompleted: 0,
+      requiredLevel: "Principiante",
+      benefits: [HabitBenefit.PHYSICAL, HabitBenefit.FINANCIAL],
+      difficulty: HabitDifficulty.MEDIUM
     });
   }
-  
-  // Add default habits for everyone
-  habits.push({
-    id: uuidv4(),
-    name: "Lectura diaria",
-    description: "Lee al menos 15 minutos al día",
-    category: HabitCategory.READING,
-    streak: 0,
-    lastCompleted: null,
-    goal: 21, // 21 días para formar el hábito
-    cycleCompleted: false,
-    cycleCompletedAt: null,
-    cyclesCompleted: 0
-  });
-  
-  habits.push({
-    id: uuidv4(),
-    name: "Ejercicio físico",
-    description: "Realiza al menos 15 minutos de ejercicio al día",
-    category: HabitCategory.FITNESS,
-    streak: 0,
-    lastCompleted: null,
-    goal: 21, // 21 días para formar el hábito
-    cycleCompleted: false,
-    cycleCompletedAt: null,
-    cyclesCompleted: 0
-  });
-  
-  habits.push({
-    id: uuidv4(),
-    name: "Networking",
-    description: "Establece una nueva conexión profesional cada semana",
-    category: HabitCategory.SOCIAL,
-    streak: 0,
-    lastCompleted: null,
-    goal: 21, // 21 días para formar el hábito
-    cycleCompleted: false,
-    cycleCompletedAt: null,
-    cyclesCompleted: 0
-  });
   
   return habits;
 };
 
 export const createInitialAchievements = (): Achievement[] => {
   return [
+    // Logros básicos disponibles para todos los niveles
     {
       id: uuidv4(),
       name: "Primer Paso",
@@ -124,6 +437,18 @@ export const createInitialAchievements = (): Achievement[] => {
       requirement: 7,
       currentProgress: 0
     },
+    {
+      id: uuidv4(),
+      name: "Maestro de hábitos",
+      description: "Completa un ciclo completo de 21 días para cualquier hábito",
+      icon: "calendar-check",
+      unlockedAt: null,
+      category: AchievementCategory.OVERALL,
+      requirement: 21,
+      currentProgress: 0
+    },
+    
+    // Logros por niveles
     {
       id: uuidv4(),
       name: "Maestro de la abstinencia",
@@ -154,14 +479,46 @@ export const createInitialAchievements = (): Achievement[] => {
       requirement: 21,
       currentProgress: 0
     },
+    
+    // Logros avanzados (requieren nivel específico)
     {
       id: uuidv4(),
-      name: "Maestro de hábitos",
-      description: "Completa un ciclo completo de 21 días para cualquier hábito",
-      icon: "calendar-check",
+      name: "Financieramente disciplinado",
+      description: "Completa un ciclo de 21 días de un hábito financiero",
+      icon: "circle-dollar-sign",
+      unlockedAt: null,
+      category: AchievementCategory.FINANCIAL,
+      requirement: 21,
+      currentProgress: 0
+    },
+    {
+      id: uuidv4(),
+      name: "Socialmente competente",
+      description: "Completa 10 hábitos sociales",
+      icon: "users",
+      unlockedAt: null,
+      category: AchievementCategory.SOCIAL,
+      requirement: 10,
+      currentProgress: 0
+    },
+    {
+      id: uuidv4(),
+      name: "Maestro del autocontrol",
+      description: "Completa 3 ciclos de 21 días de hábitos de abstinencia",
+      icon: "medal",
+      unlockedAt: null,
+      category: AchievementCategory.ABSTINENCE,
+      requirement: 63,
+      currentProgress: 0
+    },
+    {
+      id: uuidv4(),
+      name: "Megaevolución",
+      description: "Completa 3 mega hábitos",
+      icon: "award",
       unlockedAt: null,
       category: AchievementCategory.OVERALL,
-      requirement: 21,
+      requirement: 3,
       currentProgress: 0
     }
   ];
