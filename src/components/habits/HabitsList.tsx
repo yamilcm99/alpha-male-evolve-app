@@ -1,19 +1,27 @@
-
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useHabits } from '@/context/HabitsContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Check, Calendar, ArrowUpRight } from 'lucide-react';
+import { Check, Calendar, ArrowUpRight, Loader2 } from 'lucide-react';
 import { HabitCategory } from '@/types/user';
 import { toast } from '@/components/ui/sonner';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const HabitsList = () => {
   const { habits, completeHabit } = useHabits();
   
-  const handleComplete = (habitId: string) => {
-    completeHabit(habitId);
-    toast.success('¡Hábito completado para hoy!');
+  const handleComplete = async (habitId: string) => {
+    try {
+      completeHabit(habitId);
+      toast.success('¡Hábito completado para hoy!', {
+        description: 'Sigue así para mantener tu racha.'
+      });
+    } catch (error) {
+      toast.error('No se pudo completar el hábito', {
+        description: 'Por favor intenta nuevamente.'
+      });
+    }
   };
   
   const getCategoryIcon = (category: HabitCategory) => {
@@ -37,16 +45,23 @@ const HabitsList = () => {
 
   const isCompletedToday = (lastCompleted: Date | null): boolean => {
     if (!lastCompleted) return false;
-    
     const today = new Date();
     const completedDate = new Date(lastCompleted);
-    
-    return (
-      today.getDate() === completedDate.getDate() &&
-      today.getMonth() === completedDate.getMonth() &&
-      today.getFullYear() === completedDate.getFullYear()
-    );
+    return today.toDateString() === completedDate.toDateString();
   };
+
+  // Memoize the sorted habits list
+  const sortedHabits = useMemo(() => {
+    return [...habits].sort((a, b) => {
+      // Show incomplete habits first
+      const aCompleted = isCompletedToday(a.lastCompleted);
+      const bCompleted = isCompletedToday(b.lastCompleted);
+      if (aCompleted !== bCompleted) return aCompleted ? 1 : -1;
+      
+      // Then sort by streak (higher streaks first)
+      return b.streak - a.streak;
+    });
+  }, [habits]);
 
   if (!habits.length) {
     return (
@@ -54,11 +69,17 @@ const HabitsList = () => {
         <CardHeader>
           <CardTitle>Mis Hábitos</CardTitle>
         </CardHeader>
-        <CardContent className="flex items-center justify-center p-6">
+        <CardContent className="flex flex-col items-center justify-center p-6">
           <div className="text-center">
             <p className="mb-4">No tienes hábitos configurados aún.</p>
-            <Button className="bg-evolve-purple hover:bg-evolve-purple/80">
-              Nuevo Hábito
+            <Button 
+              asChild
+              className="bg-evolve-purple hover:bg-evolve-purple/80"
+            >
+              <Link to="?tab=new">
+                Crear primer hábito
+                <ArrowUpRight className="ml-2 h-4 w-4" />
+              </Link>
             </Button>
           </div>
         </CardContent>
@@ -78,43 +99,65 @@ const HabitsList = () => {
         </Button>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
-          {habits.map(habit => {
-            const completed = isCompletedToday(habit.lastCompleted);
-            
-            return (
-              <div 
-                key={habit.id}
-                className="flex items-center justify-between p-3 rounded-lg bg-evolve-dark/40 border border-evolve-gray/20"
-              >
-                <div className="flex items-center">
-                  <span className="mr-3 text-2xl">{getCategoryIcon(habit.category)}</span>
-                  <div>
-                    <h4 className="font-medium">{habit.name}</h4>
-                    <div className="flex items-center text-sm text-gray-300">
-                      <span className="mr-2">Racha: {habit.streak} días</span>
-                      <span>Meta: {habit.goal} días</span>
+        <div 
+          className="space-y-3"
+          role="list"
+          aria-label="Lista de hábitos"
+        >
+          <AnimatePresence>
+            {sortedHabits.map(habit => {
+              const completed = isCompletedToday(habit.lastCompleted);
+              
+              return (
+                <motion.div 
+                  key={habit.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="flex items-center justify-between p-3 rounded-lg bg-evolve-dark/40 border border-evolve-gray/20 transition-all hover:border-evolve-purple/30"
+                  role="listitem"
+                >
+                  <div className="flex items-center">
+                    <span 
+                      className="mr-3 text-2xl" 
+                      role="img" 
+                      aria-label={`Categoría: ${habit.category}`}
+                    >
+                      {getCategoryIcon(habit.category)}
+                    </span>
+                    <div>
+                      <h4 className="font-medium">{habit.name}</h4>
+                      <div className="flex items-center text-sm text-gray-300">
+                        <span className="mr-2">Racha: {habit.streak} días</span>
+                        <span>Meta: {habit.goal} días</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                {completed ? (
-                  <div className="flex items-center text-green-500">
-                    <Check size={20} className="mr-1" />
-                    <span>Completado</span>
-                  </div>
-                ) : (
-                  <Button
-                    onClick={() => handleComplete(habit.id)}
-                    size="sm"
-                    className="bg-evolve-purple hover:bg-evolve-purple/80"
-                  >
-                    <Calendar size={16} className="mr-2" /> Completar
-                  </Button>
-                )}
-              </div>
-            );
-          })}
+                  
+                  {completed ? (
+                    <motion.div 
+                      initial={{ scale: 0.8 }}
+                      animate={{ scale: 1 }}
+                      className="flex items-center text-green-500 bg-green-500/10 px-3 py-1 rounded-full"
+                    >
+                      <Check size={16} className="mr-1" />
+                      <span>Completado</span>
+                    </motion.div>
+                  ) : (
+                    <Button
+                      onClick={() => handleComplete(habit.id)}
+                      size="sm"
+                      className="bg-evolve-purple hover:bg-evolve-purple/80 transition-all group-hover:scale-105"
+                      aria-label={`Completar hábito: ${habit.name}`}
+                    >
+                      <Calendar size={16} className="mr-2" /> 
+                      Completar
+                    </Button>
+                  )}
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
         </div>
       </CardContent>
     </Card>
